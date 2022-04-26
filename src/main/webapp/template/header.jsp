@@ -14,6 +14,6 @@
 <a href="sections/cars_list.jsp">Parco Auto</a>|
 <!-- SE l'utente è admin account va alla dashboard admin, sennò va alla dashboard utente-->
 <a href="user/dashboard.jsp">Account</a>
-<a href="admin/dashboard.jsp">Admin</a>
+|<a href="admin/dashboard.jsp">Admin</a>
 <hr>
 <br>
