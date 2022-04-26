@@ -27,7 +27,12 @@ public class RentDao {
         }
     }
 
-    public List < Rent > getRents() {
+    /*
+    * Query di selezione
+     */
+
+    //Ritorna la lista di tutte le prenotazioni
+    public List <Rent> getRents() {
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
             return session.createQuery("from Rent", Rent.class).list();
         }

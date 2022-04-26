@@ -28,13 +28,7 @@ public class UserDao {
         }
     }
 
-    /* Query da creare:
-    * seleziona per email
-    * seleziona per email e password
-    * seleziona per nome o iniziale
-    * seleziona per cognome o iniziale
-     */
-
+    //Controllo email durante registrazione utente
     public User selEmail(String email) {
         Transaction tx = null;
         User user = null;
@@ -54,4 +48,96 @@ public class UserDao {
         return user;
     }
 
+    //Controllo utente durante login
+    public User selEmailPassword(String email, String password) {
+        Transaction tx = null;
+        User user = null;
+
+        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
+            tx = session.beginTransaction();
+            Query query = session.createQuery("Select * from user where email = :email and password = :password");
+            query.setParameter("email", email);
+            query.setParameter("password", password);
+
+            user = (User) query.uniqueResult();
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        }
+        return user;
+    }
+
+    //Ricerca via nome
+    public User selName(String firstName) {
+        Transaction tx = null;
+        User user = null;
+
+        try(Session session = HibernateConfig.getSessionFactory().openSession()) {
+            Query query = session.createQuery("Select * from user where first_name like :firstName %");
+            query.setParameter("firstName", firstName);
+
+            user = (User) query.uniqueResult();
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        }
+        return user;
+    }
+
+
+    //Aggiorna email
+    public void updateEmail(String email, Long id) {
+        Transaction tx = null;
+        try(Session session = HibernateConfig.getSessionFactory().openSession()) {
+            Query query = session.createQuery("Update user set email = :email where id = :id");
+            query.setParameter("email", email);
+            query.executeUpdate();
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        }
+    }
+
+    //Aggiorna password
+    public void updatePassword(String password, Long id) {
+        Transaction tx = null;
+        try(Session session = HibernateConfig.getSessionFactory().openSession()) {
+            Query query = session.createQuery("Update user set password = :password where id = :id");
+            query.setParameter("password", password);
+            query.executeUpdate();
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        }
+    }
+
+    //Cancella utente
+    public void deleteUser(Long id) {
+        Transaction tx = null;
+        try(Session session = HibernateConfig.getSessionFactory().openSession()) {
+            Query query = session.createQuery("Delete from user where id = :id");
+            query.setParameter("id", id);
+            query.executeUpdate();
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        }
+    }
+
+    //Ritorna tutti gli utenti
+    public List <User> getUsers() {
+        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
+            return session.createQuery("from User", User.class).list();
+        }
+    }
 }
