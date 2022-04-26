@@ -33,11 +33,6 @@ public class HibernateConfig {
 
                 settings.put(Environment.HBM2DDL_AUTO, "create-drop");
 
-                settings.put(Environment.C3P0_MIN_SIZE, "5");
-                settings.put(Environment.C3P0_MAX_SIZE, "20");
-                settings.put(Environment.C3P0_ACQUIRE_INCREMENT, "1");
-                settings.put(Environment.C3P0_TIMEOUT, "1800");
-                settings.put(Environment.C3P0_MAX_STATEMENTS, "150");
 
                 configuration.setProperties(settings);
 

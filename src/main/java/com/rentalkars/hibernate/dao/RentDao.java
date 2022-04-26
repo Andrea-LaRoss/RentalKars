@@ -8,6 +8,7 @@ import org.hibernate.Transaction;
 import com.rentalkars.hibernate.entity.Rent;
 import com.rentalkars.hibernate.utils.HibernateConfig;
 
+
 public class RentDao {
     public void saveRent(Rent Rent) {
         Transaction transaction = null;

@@ -7,28 +7,51 @@ import org.hibernate.Transaction;
 
 import com.rentalkars.hibernate.entity.User;
 import com.rentalkars.hibernate.utils.HibernateConfig;
+import org.hibernate.query.Query;
 
 public class UserDao {
-    public void saveUser(User User) {
-        Transaction transaction = null;
+
+    public void saveUser(User user) {
+        Transaction tx = null;
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
             // start a transaction
-            transaction = session.beginTransaction();
+            tx = session.beginTransaction();
             // save the User object
-            session.save(User);
+            session.save(user);
             // commit transaction
-            transaction.commit();
+            tx.commit();
         } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
+            if (tx != null) {
+                tx.rollback();
             }
             e.printStackTrace();
         }
     }
 
-    public List < User > getUsers() {
+    /* Query da creare:
+    * seleziona per email
+    * seleziona per email e password
+    * seleziona per nome o iniziale
+    * seleziona per cognome o iniziale
+     */
+
+    public User selEmail(String email) {
+        Transaction tx = null;
+        User user = null;
+
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
-            return session.createQuery("from User", User.class).list();
+            tx = session.beginTransaction();
+            Query query = session.createQuery("Select * from user where email = :email");
+            query.setParameter("email", email);
+
+            user = (User) query.uniqueResult();
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
         }
+        return user;
     }
+
 }

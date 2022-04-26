@@ -15,11 +15,11 @@ public class Rent implements Serializable {
     private long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "car_id", nullable = false)
+    @JoinColumn(name = "car_id", referencedColumnName = "id", nullable = false)
     private Car car;
 
     @Temporal(TemporalType.DATE)

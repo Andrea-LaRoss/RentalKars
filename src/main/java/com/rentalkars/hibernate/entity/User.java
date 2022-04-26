@@ -1,6 +1,6 @@
 package com.rentalkars.hibernate.entity;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -34,7 +34,7 @@ public class User implements Serializable {
     @Column(name = "is_admin", nullable = false)
     private boolean isAdmin;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Rent> reservations;
 
     public User(){

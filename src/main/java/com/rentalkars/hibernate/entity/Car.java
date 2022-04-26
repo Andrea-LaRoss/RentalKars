@@ -32,7 +32,7 @@ public class Car implements Serializable {
     @Column(name = "reg_date")
     private Date regDate;
 
-    @OneToMany(mappedBy = "car")
+    @OneToMany(mappedBy = "car", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Rent> reservation;
 
     public Car(){

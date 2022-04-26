@@ -6,7 +6,7 @@
 <br>
 <div align="center">
     <a href="auth/login.jsp">Accedi/Registrati</a>
+    <a href="sections/homepage.jsp">Vai alla home</a>
 </div>
-<a href="sections/homepage.jsp">Vai alla home</a>
 </body>
 </html>
