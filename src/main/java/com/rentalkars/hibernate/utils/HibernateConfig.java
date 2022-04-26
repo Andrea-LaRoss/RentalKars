@@ -25,7 +25,7 @@ public class HibernateConfig {
                 settings.put(Environment.URL, "");
                 settings.put(Environment.USER, "root");
                 settings.put(Environment.PASS, "root");
-                settings.put(Environment.DIALECT, "org.hibernate.dialect.MySQLDialect");
+                settings.put(Environment.DIALECT, "org.hibernate.dialect.MySQL5Dialect");
 
                 settings.put(Environment.SHOW_SQL, "true");
 

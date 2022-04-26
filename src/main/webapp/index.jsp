@@ -1,12 +1,14 @@
 <jsp:include page="template/header.jsp"/>
+
 <h1 align="center">RentalKars</h1>
 <br/>
 <h3 align="center">Benvenuto Utente</h3>
 <br>
 <br>
 <div align="center">
-    <a href="auth/login.jsp">Accedi/Registrati</a>
-    <a href="sections/homepage.jsp">Vai alla home</a>
+    <a href="auth/login.jsp">Accedi/Registrati</a> <br>
+    <a href="TestDB">Test connessione database</a>
 </div>
+
 </body>
 </html>

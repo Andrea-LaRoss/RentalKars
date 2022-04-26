@@ -95,6 +95,7 @@ public class UserDao {
         try(Session session = HibernateConfig.getSessionFactory().openSession()) {
             Query query = session.createQuery("Update user set email = :email where id = :id");
             query.setParameter("email", email);
+            query.setParameter("id", id);
             query.executeUpdate();
         } catch (Exception e) {
             if (tx != null) {
@@ -110,6 +111,7 @@ public class UserDao {
         try(Session session = HibernateConfig.getSessionFactory().openSession()) {
             Query query = session.createQuery("Update user set password = :password where id = :id");
             query.setParameter("password", password);
+            query.setParameter("id", id);
             query.executeUpdate();
         } catch (Exception e) {
             if (tx != null) {
@@ -134,10 +136,11 @@ public class UserDao {
         }
     }
 
-    //Ritorna tutti gli utenti
+    //Ritorna tutti gli utenti con l'ultima prenotazione effettuata
     public List <User> getUsers() {
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
-            return session.createQuery("from User", User.class).list();
+            return session.createQuery("Select u.first_name, u.last_name, u.email, max(r.id) " +
+                    "from user as u inner join rent as r where id = r.user_id").list();
         }
     }
 }

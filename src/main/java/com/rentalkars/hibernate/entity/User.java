@@ -41,6 +41,15 @@ public class User implements Serializable {
 
     }
 
+    public User(String email, String password, String firstName, String lastName, Date birthday, boolean isAdmin) {
+        this.email = email;
+        this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.birthday = birthday;
+        this.isAdmin = isAdmin;
+    }
+
     public long getId() {
         return id;
     }
@@ -96,4 +105,5 @@ public class User implements Serializable {
     public void setAdmin(boolean admin) {
         isAdmin = admin;
     }
+
 }

@@ -1,5 +1,6 @@
 package com.rentalkars.hibernate.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Session;
@@ -7,6 +8,7 @@ import org.hibernate.Transaction;
 
 import com.rentalkars.hibernate.entity.Rent;
 import com.rentalkars.hibernate.utils.HibernateConfig;
+import org.hibernate.query.Query;
 
 
 public class RentDao {
@@ -31,10 +33,42 @@ public class RentDao {
     * Query di selezione
      */
 
-    //Ritorna la lista di tutte le prenotazioni
+    //Aggiornamento prenotazione
+    public void updateReservation(Date startDate, Date endDate, Long id) {
+        Transaction tx = null;
+        try(Session session = HibernateConfig.getSessionFactory().openSession()) {
+            Query query = session.createQuery("Update rent set start_date = :startDate, end_date = :endDate where id = :id");
+            query.setParameter("startDate", startDate);
+            query.setParameter("endDate", endDate);
+            query.executeUpdate();
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        }
+    }
+
+    //Cancellazione prenotazione
+    public void deleteReservation(Long id) {
+        Transaction tx = null;
+        try(Session session = HibernateConfig.getSessionFactory().openSession()) {
+            Query query = session.createQuery("Delete from rent where id = :id");
+            query.setParameter("id", id);
+            query.executeUpdate();
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        }
+    }
+
+    //Ritorna la lista di tutte le prenotazioni con i relativi utenti collegati
     public List <Rent> getRents() {
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
-            return session.createQuery("from Rent", Rent.class).list();
+            return session.createQuery("select r.start_date, r.end_date, u.first_name, u.last_nasme " +
+                    "from rent as r inner join user as u where u.id = r.user_id").list();
         }
     }
 }

@@ -150,7 +150,7 @@ public class CarDao {
         }
     }
 
-    //Ritorna la lista di tutte le prenotazioni
+    //Ritorna la lista di tutte le auto con l'ultima prenotazione effettuata su di esse
     public List <Car> getCars() {
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
             return session.createQuery("from Car", Car.class).list();
