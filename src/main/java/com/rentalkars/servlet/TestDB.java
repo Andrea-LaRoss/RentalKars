@@ -16,16 +16,16 @@ import java.util.List;
 public class TestDB extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-       /* UserDao userDao = new UserDao();
+        UserDao userDao = new UserDao();
         Date nascita1 = new Date (1, 1, 1990);
         User user = new User("test@admin.com", "1234", "TestNome", "TestCognome", nascita1, true);
         userDao.saveUser(user);
 
-        List< User > users = userDao.getUsers();*/
+        List< User > users = userDao.getUsers();
 
-        Session session = HibernateConfig.getSessionFactory().openSession();
+        //Session session = HibernateConfig.getSessionFactory().openSession();
 
-        request.setAttribute("session", session);
+        request.setAttribute("session", user);
 
         //Ottenere il request dispatcher
         RequestDispatcher dispatcher = request.getRequestDispatcher("/sections/homepage.jsp");

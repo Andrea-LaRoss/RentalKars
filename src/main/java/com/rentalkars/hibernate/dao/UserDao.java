@@ -35,7 +35,7 @@ public class UserDao {
 
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
-            Query query = session.createQuery("Select * from user where email = :email");
+            Query query = session.createQuery("Select * from User where email = :email");
             query.setParameter("email", email);
 
             user = (User) query.uniqueResult();
@@ -55,7 +55,7 @@ public class UserDao {
 
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
-            Query query = session.createQuery("Select * from user where email = :email and password = :password");
+            Query query = session.createQuery("Select * from User where email = :email and password = :password");
             query.setParameter("email", email);
             query.setParameter("password", password);
 
@@ -75,7 +75,7 @@ public class UserDao {
         User user = null;
 
         try(Session session = HibernateConfig.getSessionFactory().openSession()) {
-            Query query = session.createQuery("Select * from user where first_name like :firstName %");
+            Query query = session.createQuery("Select * from User where first_name like :firstName %");
             query.setParameter("firstName", firstName);
 
             user = (User) query.uniqueResult();
@@ -93,7 +93,7 @@ public class UserDao {
     public void updateEmail(String email, Long id) {
         Transaction tx = null;
         try(Session session = HibernateConfig.getSessionFactory().openSession()) {
-            Query query = session.createQuery("Update user set email = :email where id = :id");
+            Query query = session.createQuery("Update User set email = :email where id = :id");
             query.setParameter("email", email);
             query.setParameter("id", id);
             query.executeUpdate();
@@ -109,7 +109,7 @@ public class UserDao {
     public void updatePassword(String password, Long id) {
         Transaction tx = null;
         try(Session session = HibernateConfig.getSessionFactory().openSession()) {
-            Query query = session.createQuery("Update user set password = :password where id = :id");
+            Query query = session.createQuery("Update User set password = :password where id = :id");
             query.setParameter("password", password);
             query.setParameter("id", id);
             query.executeUpdate();
@@ -125,7 +125,7 @@ public class UserDao {
     public void deleteUser(Long id) {
         Transaction tx = null;
         try(Session session = HibernateConfig.getSessionFactory().openSession()) {
-            Query query = session.createQuery("Delete from user where id = :id");
+            Query query = session.createQuery("Delete from User u where u.id = :id");
             query.setParameter("id", id);
             query.executeUpdate();
         } catch (Exception e) {
@@ -138,7 +138,7 @@ public class UserDao {
 
     public List < User > getUsers() {
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
-            return session.createQuery("from user", User.class).list();
+            return session.createQuery("from User", User.class).list();
         }
     }
 
@@ -146,7 +146,7 @@ public class UserDao {
    /* public List <User> getUsersRents() {
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
             return session.createQuery("Select u.first_name, u.last_name, u.email, max(r.id) " +
-                    "from user as u inner join rent as r where id = r.user_id").list();
+                    "from User as u inner join rent as r where id = r.user_id").list();
        }
     }*/
 }

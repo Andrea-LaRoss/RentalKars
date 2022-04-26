@@ -12,7 +12,7 @@ import java.util.Set;
 public class Car implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private long id;
 
@@ -32,8 +32,8 @@ public class Car implements Serializable {
     @Column(name = "reg_date")
     private Date regDate;
 
-    @OneToMany(mappedBy = "car", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Rent> reservation;
+  /*  @OneToMany(mappedBy = "car", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Rent> reservation;*/
 
     public Car(){
 
