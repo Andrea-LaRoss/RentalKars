@@ -34,8 +34,8 @@ public class User implements Serializable {
     @Column(name = "is_admin", nullable = false)
     private boolean isAdmin;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Rent> reservations;
+  //  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+   // private Set<Rent> reservations;
 
     public User(){
 

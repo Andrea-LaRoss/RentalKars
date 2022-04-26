@@ -20,9 +20,7 @@ public class HibernateConfig {
                 //Settings Hibernate
                 Properties settings = new Properties();
                 settings.put(Environment.DRIVER, "com.mysql.cj.jdbc.Driver");
-                settings.put(Environment.URL, "jdbc:mysql://localhost:3306/rentalkars?useSSL=false");
-                settings.put(Environment.DRIVER, "");
-                settings.put(Environment.URL, "");
+                settings.put(Environment.URL, "jdbc:mysql://localhost:3306/test");
                 settings.put(Environment.USER, "root");
                 settings.put(Environment.PASS, "root");
                 settings.put(Environment.DIALECT, "org.hibernate.dialect.MySQL5Dialect");
@@ -37,11 +35,12 @@ public class HibernateConfig {
                 configuration.setProperties(settings);
 
                 configuration.addAnnotatedClass(User.class);
-                configuration.addAnnotatedClass(Car.class);
-                configuration.addAnnotatedClass(Rent.class);
+                //configuration.addAnnotatedClass(Car.class);
+                //configuration.addAnnotatedClass(Rent.class);
 
-                ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
-                        .applySettings(configuration.getProperties()).build();
+                StandardServiceRegistryBuilder standardServiceRegistryBuilder = new StandardServiceRegistryBuilder();
+                standardServiceRegistryBuilder.applySettings(configuration.getProperties());
+                ServiceRegistry serviceRegistry = standardServiceRegistryBuilder.build();
 
                 sessionFactory = configuration.buildSessionFactory(serviceRegistry);
             } catch (Exception e) {

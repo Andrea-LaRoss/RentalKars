@@ -2,6 +2,8 @@ package com.rentalkars.servlet;
 
 import com.rentalkars.hibernate.dao.UserDao;
 import com.rentalkars.hibernate.entity.User;
+import com.rentalkars.hibernate.utils.HibernateConfig;
+import org.hibernate.Session;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -14,19 +16,22 @@ import java.util.List;
 public class TestDB extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        UserDao studentDao = new UserDao();
+       /* UserDao userDao = new UserDao();
         Date nascita1 = new Date (1, 1, 1990);
         User user = new User("test@admin.com", "1234", "TestNome", "TestCognome", nascita1, true);
-        studentDao.saveUser(user);
+        userDao.saveUser(user);
 
-        List< User > users = studentDao.getUsers();
+        List< User > users = userDao.getUsers();*/
 
-        request.setAttribute("users_list", users);
+        Session session = HibernateConfig.getSessionFactory().openSession();
+
+        request.setAttribute("session", session);
 
         //Ottenere il request dispatcher
-        RequestDispatcher dispatcher = request.getRequestDispatcher("sections/homepage.jsp");
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/sections/homepage.jsp");
         //Girare la request al file jsp
         dispatcher.forward(request, response);
+
     }
 
     @Override

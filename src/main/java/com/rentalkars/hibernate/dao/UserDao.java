@@ -136,11 +136,17 @@ public class UserDao {
         }
     }
 
+    public List < User > getUsers() {
+        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
+            return session.createQuery("from user", User.class).list();
+        }
+    }
+
     //Ritorna tutti gli utenti con l'ultima prenotazione effettuata
-    public List <User> getUsers() {
+   /* public List <User> getUsersRents() {
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
             return session.createQuery("Select u.first_name, u.last_name, u.email, max(r.id) " +
                     "from user as u inner join rent as r where id = r.user_id").list();
-        }
-    }
+       }
+    }*/
 }
