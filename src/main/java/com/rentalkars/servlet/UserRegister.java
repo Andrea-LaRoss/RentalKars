@@ -9,6 +9,7 @@ import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Date;
 
 @WebServlet(name = "UserRegister", value = "/UserRegister")
@@ -25,12 +26,7 @@ public class UserRegister extends HttpServlet {
         String password = request.getParameter("password");
         String firstName = request.getParameter("firstName");
         String lastName = request.getParameter("lastName");
-        Date birthday = null;
-        try {
-            birthday = new SimpleDateFormat("").parse(request.getParameter("birthday"));
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
+        LocalDate birthday = LocalDate.parse(request.getParameter("birthday"));
 
 
         UserDao userDao = new UserDao();

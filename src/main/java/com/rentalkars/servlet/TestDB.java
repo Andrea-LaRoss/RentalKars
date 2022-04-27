@@ -9,7 +9,7 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @WebServlet(name = "TestDB", value = "/TestDB")
@@ -17,8 +17,8 @@ public class TestDB extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         UserDao userDao = new UserDao();
-        Date nascita1 = new Date(1990, 01, 01);
-        User user = new User("test@admin.com", "1234", "TestNome", "TestCognome", nascita1, true);
+        LocalDate nascita = LocalDate.of(1990, 01, 01);
+        User user = new User("test@admin.com", "1234", "TestNome", "TestCognome", nascita, true);
         userDao.saveUser(user);
 
         List < User > reg =  userDao.getUsers();

@@ -28,16 +28,22 @@ public class UserLogin extends HttpServlet {
 
         UserDao userDao = new UserDao();
         User user = userDao.selEmailPassword(email, password);
+
         if(user == null){
+
             out.println("Credenziali errate. Riprova");
             RequestDispatcher dispatcher = request.getRequestDispatcher("/auth/login.jsp");
-            dispatcher.include(request, response);
+
         }
 
         if(user.isAdmin()){
+
             reg = userDao.getUsers();
+
         } else {
+
             reg = null;
+
         }
 
         request.setAttribute("reg", reg);

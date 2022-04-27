@@ -4,6 +4,7 @@ package com.rentalkars.hibernate.entity;
 import javax.persistence.*;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Set;
 
@@ -28,9 +29,8 @@ public class Car implements Serializable {
     @Column(name = "num_plate", nullable = false)
     private String numPlate;
 
-    @Temporal(TemporalType.DATE)
     @Column(name = "reg_date")
-    private Date regDate;
+    private LocalDate regDate;
 
     @OneToMany(mappedBy = "car", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Rent> reservation;
@@ -39,7 +39,7 @@ public class Car implements Serializable {
 
     }
 
-    public Car(String manufacturer, String model, String type, String numPlate, Date regDate) {
+    public Car(String manufacturer, String model, String type, String numPlate, LocalDate regDate) {
         this.manufacturer = manufacturer;
         this.model = model;
         this.type = type;
@@ -87,11 +87,11 @@ public class Car implements Serializable {
         this.numPlate = numPlate;
     }
 
-    public Date getRegDate() {
+    public LocalDate getRegDate() {
         return regDate;
     }
 
-    public void setRegDate(Date regDate) {
+    public void setRegDate(LocalDate regDate) {
         this.regDate = regDate;
     }
 }

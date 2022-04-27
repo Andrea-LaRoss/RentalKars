@@ -3,6 +3,7 @@ package com.rentalkars.hibernate.entity;
 import javax.persistence.*;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Set;
 
@@ -27,9 +28,8 @@ public class User implements Serializable {
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @Temporal(TemporalType.DATE)
     @Column(name = "birthday")
-    private Date birthday;
+    private LocalDate birthday;
 
     @Column(name = "is_admin", nullable = false)
     private boolean isAdmin;
@@ -41,7 +41,7 @@ public class User implements Serializable {
 
     }
 
-    public User(String email, String password, String firstName, String lastName, Date birthday, boolean isAdmin) {
+    public User(String email, String password, String firstName, String lastName, LocalDate birthday, boolean isAdmin) {
         this.email = email;
         this.password = password;
         this.firstName = firstName;
@@ -90,11 +90,11 @@ public class User implements Serializable {
         this.lastName = lastName;
     }
 
-    public Date getBirthday() {
+    public LocalDate getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(Date birthday) {
+    public void setBirthday(LocalDate birthday) {
         this.birthday = birthday;
     }
 

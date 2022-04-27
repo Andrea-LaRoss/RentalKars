@@ -3,6 +3,7 @@ package com.rentalkars.hibernate.entity;
 import javax.persistence.*;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -22,13 +23,11 @@ public class Rent implements Serializable {
     @JoinColumn(name = "car_id", referencedColumnName = "id", nullable = false)
     private Car car;
 
-    @Temporal(TemporalType.DATE)
     @Column(name = "start_date")
-    private Date startDate;
+    private LocalDate startDate;
 
-    @Temporal(TemporalType.DATE)
     @Column(name = "end_date")
-    private Date endDate;
+    private LocalDate endDate;
 
     public Rent(){
 
@@ -59,19 +58,19 @@ public class Rent implements Serializable {
         this.car = car;
     }
 
-    public Date getStartDate() {
+    public LocalDate getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
 
-    public Date getEndDate() {
+    public LocalDate getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
     }
 }
