@@ -62,6 +62,7 @@ public class UserController extends HttpServlet {
 
         listUsers(request, response);
     }
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 

@@ -22,8 +22,9 @@
             <td>${tempCar.type}</td>
             <td>${tempCar.numPlate}</td>
             <td>${tempCar.regDate}</td>
-            <td><a href="">Modifica</a> <a href="DeleteObj">Elimina</a></td>
+            <td></td>
         </tr>
+        <a href="">Modifica</a> <a href="">Elimina</a>
     </c:forEach>
 </table>
 
