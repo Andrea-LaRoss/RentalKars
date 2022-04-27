@@ -4,7 +4,7 @@
 <h2>Listino auto</h2>
 
 <!-- SE l'utente è admin mostra il tasto-->
-<a href="/admin/manage_cars"><strong>+</strong></a> <br>
+<a href="admin/manage_cars.jsp"><strong>Aggiungi</strong></a> <br>
 
 <table border="1">
     <tr>
@@ -27,4 +27,5 @@
     </c:forEach>
 </table>
 
-<!-- Mostrare tutta la lista di auto-->
+</body>
+</html>
