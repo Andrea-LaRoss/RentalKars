@@ -7,7 +7,9 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
+
 
 @WebServlet(name = "UserLogin", value = "/UserLogin")
 public class UserLogin extends HttpServlet {
@@ -22,9 +24,15 @@ public class UserLogin extends HttpServlet {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
+        PrintWriter out = response.getWriter();
+
         UserDao userDao = new UserDao();
         User user = userDao.selEmailPassword(email, password);
-
+        if(user == null){
+            out.println("Credenziali errate. Riprova");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/auth/login.jsp");
+            dispatcher.include(request, response);
+        }
 
         if(user.isAdmin()){
             reg = userDao.getUsers();

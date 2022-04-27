@@ -17,7 +17,7 @@ public class TestDB extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         UserDao userDao = new UserDao();
-        Date nascita1 = new Date (1, 1, 1990);
+        Date nascita1 = new Date(1990, 01, 01);
         User user = new User("test@admin.com", "1234", "TestNome", "TestCognome", nascita1, true);
         userDao.saveUser(user);
 
