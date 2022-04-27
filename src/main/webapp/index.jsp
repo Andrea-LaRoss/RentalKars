@@ -9,6 +9,6 @@
     <a href="auth/login.jsp">Accedi/Registrati</a> <br>
     <a href="TestDB">Test connessione database</a>
 </div>
-
+<%= request.getSession()%>
 </body>
 </html>

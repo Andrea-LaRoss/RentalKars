@@ -32,11 +32,19 @@ public class Car implements Serializable {
     @Column(name = "reg_date")
     private Date regDate;
 
-  /*  @OneToMany(mappedBy = "car", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Rent> reservation;*/
+    @OneToMany(mappedBy = "car", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Rent> reservation;
 
     public Car(){
 
+    }
+
+    public Car(String manufacturer, String model, String type, String numPlate, Date regDate) {
+        this.manufacturer = manufacturer;
+        this.model = model;
+        this.type = type;
+        this.numPlate = numPlate;
+        this.regDate = regDate;
     }
 
     public long getId() {

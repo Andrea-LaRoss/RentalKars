@@ -55,7 +55,7 @@ public class UserDao {
 
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
-            Query query = session.createQuery("Select * from User where email = :email and password = :password");
+            Query query = session.createQuery("From User where email = :email and password = :password");
             query.setParameter("email", email);
             query.setParameter("password", password);
 

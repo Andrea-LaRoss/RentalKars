@@ -10,10 +10,15 @@
 </head>
 <body>
 
-<a href="index.jsp">Homepage</a>|
-<a href="sections/cars_list.jsp">Parco Auto</a>|
+<a href="ToHome">Homepage</a>|
+<a href="sections/cars_list.jsp">Parco Auto</a>
+
 <!-- SE l'utente è admin account va alla dashboard admin, sennò va alla dashboard utente-->
-<a href="user/dashboard.jsp">Account</a>
-|<a href="admin/dashboard.jsp">Admin</a>
+<c:if test="${account}">
+    |<a href="user/dashboard.jsp">Account</a>
+    <c:if test="${account.isAdmin}">
+        |<a href="admin/dashboard.jsp">Admin</a>
+    </c:if>
+</c:if>
 <hr>
 <br>

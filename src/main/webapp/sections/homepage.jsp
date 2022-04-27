@@ -1,8 +1,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <jsp:include page="/template/header.jsp"/>
 
-${session}
- TEST
+${reg} <br>
 
+<%= request.getSession()%>
 </body>
 </html>
