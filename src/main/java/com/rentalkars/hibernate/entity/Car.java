@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.Set;
 
 @Entity
-@Table(name = "car")
+@Table(name = "car", uniqueConstraints = @UniqueConstraint(columnNames = {"id", "num_plate"}))
 public class Car implements Serializable {
 
     @Id

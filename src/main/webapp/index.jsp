@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <jsp:include page="template/header.jsp"/>
 
 <h1 align="center">RentalKars</h1>
@@ -9,6 +10,6 @@
     <a href="auth/login.jsp">Accedi/Registrati</a> <br>
     <a href="TestDB">Test connessione database</a>
 </div>
-<%= request.getSession()%>
+<%= request.getSession() %>
 </body>
 </html>
