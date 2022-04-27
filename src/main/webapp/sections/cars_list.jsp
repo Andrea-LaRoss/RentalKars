@@ -23,8 +23,8 @@
             <td>${tempCar.numPlate}</td>
             <td>${tempCar.regDate}</td>
             <td></td>
+            <td><a href="">Modifica</a> | <a href="">Elimina</a></td>
         </tr>
-        <a href="">Modifica</a> <a href="">Elimina</a>
     </c:forEach>
 </table>
 

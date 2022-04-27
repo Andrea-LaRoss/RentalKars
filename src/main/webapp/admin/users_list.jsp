@@ -19,8 +19,9 @@
             <td>${tempUser.birthday}</td>
             <td>${tempUser.email}</td>
             <td></td>
+            <td><a href="">Modifica</a> | <a href="">Elimina</a></td>
         </tr>
-        <a href="">Modifica</a> <a href="">Elimina</a>
+
     </c:forEach>
 </table>
 </body>

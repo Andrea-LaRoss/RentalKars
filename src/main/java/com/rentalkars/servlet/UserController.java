@@ -14,8 +14,10 @@ import java.util.List;
 
 @WebServlet(name = "UserController", value = "/UserController")
 public class UserController extends HttpServlet {
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
         String command = request.getParameter("command");
         if(command == null) {
             command = "LIST";
@@ -31,6 +33,10 @@ public class UserController extends HttpServlet {
                 addUser(request, response);
                 break;
 
+            case "VALIDATE":
+                validateUser(request, response);
+                break;
+
             default:
                 listUsers(request, response);
                 break;
@@ -39,6 +45,7 @@ public class UserController extends HttpServlet {
     }
 
     private void listUsers(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
         UserDao uDao = new UserDao();
         List<User> userList = uDao.getUsers();
 
@@ -46,6 +53,7 @@ public class UserController extends HttpServlet {
 
         RequestDispatcher rd = request.getRequestDispatcher("/admin/users_list.jsp");
         rd.forward(request, response);
+
     }
 
     private void addUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -61,6 +69,20 @@ public class UserController extends HttpServlet {
         uDao.saveUser(user);
 
         listUsers(request, response);
+
+    }
+
+    private void validateUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        String email = request.getParameter("email");
+        String password = request.getParameter("password");
+
+        UserDao uDao = new UserDao();
+        User user = uDao.selEmailPassword(email, password);
+        request.setAttribute("loggedUser", user);
+
+        RequestDispatcher rd = request.getRequestDispatcher("/index.jsp");
+        rd.forward(request, response);
     }
 
     @Override
