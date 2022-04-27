@@ -14,11 +14,7 @@
 <a href="sections/cars_list.jsp">Parco Auto</a>
 
 <!-- SE l'utente è admin account va alla dashboard admin, sennò va alla dashboard utente-->
-<c:if test="${account}">
     |<a href="user/dashboard.jsp">Account</a>
-    <c:if test="${account.isAdmin}">
-        |<a href="admin/dashboard.jsp">Admin</a>
-    </c:if>
-</c:if>
+    |<a href="admin/dashboard.jsp">Admin</a>
 <hr>
 <br>

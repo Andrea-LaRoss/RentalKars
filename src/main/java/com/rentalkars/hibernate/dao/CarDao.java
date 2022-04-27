@@ -40,7 +40,7 @@ public class CarDao {
 
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
-            Query query = session.createQuery("Select * from car where manufacturer = :manufacturer");
+            Query query = session.createQuery("Select * from Car where manufacturer = :manufacturer");
             query.setParameter("manufacturer", manufacturer);
 
             car = (Car) query.uniqueResult();
@@ -60,7 +60,7 @@ public class CarDao {
 
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
-            Query query = session.createQuery("Select * from car where model = :model");
+            Query query = session.createQuery("Select * from Car where model = :model");
             query.setParameter("model", model);
 
             car = (Car) query.uniqueResult();
@@ -80,7 +80,7 @@ public class CarDao {
 
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
-            Query query = session.createQuery("Select * from car where type = :type");
+            Query query = session.createQuery("Select * from Car where type = :type");
             query.setParameter("type", type);
 
             car = (Car) query.uniqueResult();
@@ -100,7 +100,7 @@ public class CarDao {
 
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
-            Query query = session.createQuery("Select * from car where num_plate = :numPlate");
+            Query query = session.createQuery("Select * from Car where num_plate = :numPlate");
             query.setParameter("numPlate", numPlate);
 
             car = (Car) query.uniqueResult();
@@ -120,7 +120,7 @@ public class CarDao {
 
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
-            Query query = session.createQuery("Select * from car where reg_date = :regDate");
+            Query query = session.createQuery("Select * from Car where reg_date = :regDate");
             query.setParameter("regDate", regDate);
 
             car = (Car) query.uniqueResult();
@@ -139,7 +139,7 @@ public class CarDao {
 
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
-            Query query = session.createQuery("delete from car where id = :id");
+            Query query = session.createQuery("delete from Car where id = :id");
             query.setParameter("id", id);
 
         } catch (Exception e) {

@@ -37,7 +37,7 @@ public class RentDao {
     public void updateReservation(Date startDate, Date endDate, Long id) {
         Transaction tx = null;
         try(Session session = HibernateConfig.getSessionFactory().openSession()) {
-            Query query = session.createQuery("Update rent set start_date = :startDate, end_date = :endDate where id = :id");
+            Query query = session.createQuery("Update Rent set startDate = :startDate, endDate = :endDate where id = :id");
             query.setParameter("startDate", startDate);
             query.setParameter("endDate", endDate);
             query.executeUpdate();
@@ -53,7 +53,7 @@ public class RentDao {
     public void deleteReservation(Long id) {
         Transaction tx = null;
         try(Session session = HibernateConfig.getSessionFactory().openSession()) {
-            Query query = session.createQuery("Delete from rent where id = :id");
+            Query query = session.createQuery("Delete from Rent where id = :id");
             query.setParameter("id", id);
             query.executeUpdate();
         } catch (Exception e) {
@@ -67,8 +67,8 @@ public class RentDao {
     //Ritorna la lista di tutte le prenotazioni con i relativi utenti collegati
     public List <Rent> getRents() {
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
-            return session.createQuery("select r.start_date, r.end_date, u.first_name, u.last_nasme " +
-                    "from rent as r inner join user as u where u.id = r.user_id").list();
+            return session.createQuery("select r.startDate, r.endDate, u.firstName, u.lastName " +
+                    "from Rent as r inner join User as u").list();
         }
     }
 }
