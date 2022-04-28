@@ -11,16 +11,19 @@ import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.OffsetTime;
 import java.time.Period;
 import java.util.List;
 
 @WebServlet(name = "RentController", value = "/RentController")
 public class RentController extends HttpServlet {
 
-    private RentDao rDao = new RentDao();
+    private final RentDao rDao = new RentDao();
     private Rent rent = null;
     private RequestDispatcher rd;
 
+    private Long rentId;
     private LocalDate startDate;
     private LocalDate endDate;
 
@@ -30,28 +33,18 @@ public class RentController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        startDate = LocalDate.parse(request.getParameter("startDate"));
-        endDate = LocalDate.parse(request.getParameter("endDate"));
-
-        if(endDate.isBefore(startDate)) {
-            errorMsg = "La data finale inserita non è valida. Riprova";
-            rd = request.getRequestDispatcher("/user/manage_reservations.jsp");
-            rd.forward(request, response);
-        }
-
         String command = request.getParameter("command");
         if(command == null) {
             command = "LIST";
         }
 
         switch (command){
-
             case "LIST":
                 listRents(request, response);
                 break;
 
             case "CHECKorUPDATE":
-                if(request.getParameter("carId") == ""){
+                if(request.getParameter("rentId").equals("")){
                     checkAvailable(request, response);
                 } else {
                     updateReservation(request, response);
@@ -69,63 +62,73 @@ public class RentController extends HttpServlet {
             default:
                 listRents(request, response);
                 break;
-
         }
     }
 
     private void listRents(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
         List<Rent> rentList = rDao.getRents();
 
         request.setAttribute("rentsList", rentList);
 
         rd = request.getRequestDispatcher("/sections/reservations_list.jsp");
         rd.forward(request, response);
-
     }
 
 
     private void checkAvailable(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
         startDate = LocalDate.parse(request.getParameter("startDate"));
         endDate = LocalDate.parse(request.getParameter("endDate"));
 
+        checkDates(endDate, startDate, request, response);
+        checkDates(startDate, LocalDate.now(), request, response);
 
     }
 
+    private void checkDates (LocalDate d1, LocalDate d2, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if(d1.isBefore(d2)) {
+            errorMsg = "La data finale inserita non è valida. Riprova";
+            request.setAttribute("errorMsg", errorMsg);
+            rd = request.getRequestDispatcher("/user/manage_reservations.jsp");
+            rd.forward(request, response);
+        }
+    }
 
     private void updateReservation(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-        Long rentId = Long.valueOf(request.getParameter("rentId"));
+        rentId = Long.valueOf(request.getParameter("rentId"));
         startDate = LocalDate.parse(request.getParameter("startDate"));
         endDate = LocalDate.parse(request.getParameter("endDate"));
 
         rent = rDao.selById(rentId);
 
         Period period = Period.between(startDate, rent.getStartDate());
-        if(period.getYears() == 0 && period.getMonths() == 0 && period.getDays() <= 2) {
 
+        if(period.getYears() == 0 && period.getMonths() == 0 && period.getDays() <= 2) {
             errorMsg = "Non è possibile modificare la prenotazione. La data è troppo vicina";
             request.setAttribute("errorMsg", errorMsg);
-
             rd = request.getRequestDispatcher("/user/manage_reservations.jsp");
             rd.forward(request, response);
         }
-
-
+            rDao.updateReservation(startDate, endDate, rentId);
             rd = request.getRequestDispatcher("/sections/reservations_list.jsp");
             rd.forward(request, response);
-
     }
 
 
     private void loadReservation(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        rentId = Long.valueOf(request.getParameter("rentId"));
 
+        rent = rDao.selById(rentId);
+
+        request.setAttribute("rentUpdate", rent);
+        rd = request.getRequestDispatcher("/admin/manage_reservations.jsp");
+        rd.forward(request, response);
     }
 
 
     private void deleteReservation(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+        rentId = Long.valueOf(request.getParameter("rentId"));
+        rDao.deleteReservation(rentId);
+        listRents(request, response);
     }
 
 

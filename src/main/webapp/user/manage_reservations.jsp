@@ -1,6 +1,7 @@
 <jsp:include page="/template/header.jsp"/>
 
 <h2>Gestisci Prenotazione</h2>
+<h3>${errorMsg}</h3>
 
 <form action="RentController" method="GET">
     <span>Data Inizio:</span><br><input type="date" name="startDate" required value="${rentUpdate.startDate}"><br>

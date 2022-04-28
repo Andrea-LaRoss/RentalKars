@@ -1,6 +1,6 @@
 package com.rentalkars.hibernate.dao;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.hibernate.Session;
@@ -53,7 +53,7 @@ public class RentDao {
 
 
     //Aggiornamento prenotazione
-    public void updateReservation(Date startDate, Date endDate, Long id) {
+    public void updateReservation(LocalDate startDate, LocalDate endDate, Long id) {
         tx = null;
         try(Session session = HibernateConfig.getSessionFactory().openSession()) {
             tx = session.beginTransaction();

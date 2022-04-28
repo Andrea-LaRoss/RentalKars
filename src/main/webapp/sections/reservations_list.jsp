@@ -24,13 +24,8 @@
             <c:param name="rentId" value="${tempRent.id}"/>
         </c:url>
         <tr>
-            <td>${tempRent}</td>
-            <td>${tempRent}</td>
-            <td>${tempRent}</td>
-            <td>${tempRent}</td>
-            <td>${tempRent}</td>
-            <td>${tempRent}</td>
-            <td><a href="${update}">Modifica</a> | <a href="${delete}">Elimina</a></td>
+            <td></td>
+            <td><a href="${update}">Modifica</a> | <a href="${delete}" onclick="if(!(confirm('Sei sicuro?'))) return false">Elimina</a></td>
         </tr>
     </c:forEach>
 </table>

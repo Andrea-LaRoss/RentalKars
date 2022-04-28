@@ -9,7 +9,7 @@
 </c:url>
 
 <c:url var="reservations" value="RentController">
-    <c:param name="command" value="LOAD"/>
+    <c:param name="command" value="LIST"/>
     <c:param name="userId" value="${tempUser.id}"/>
 </c:url>
 

@@ -2,8 +2,7 @@ package com.rentalkars.servlet;
 
 import com.rentalkars.hibernate.dao.CarDao;
 import com.rentalkars.hibernate.entity.Car;
-import com.rentalkars.hibernate.entity.Car;
-import net.bytebuddy.asm.Advice;
+
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -15,8 +14,8 @@ import java.util.List;
 @WebServlet(name = "CarsController", value = "/CarsController")
 public class CarsController extends HttpServlet {
 
-    private CarDao cDao = new CarDao();
-    private Car car = null;
+    private final CarDao cDao = new CarDao();
+    private Car car;
     private RequestDispatcher rd;
 
     private Long carId;
@@ -42,7 +41,7 @@ public class CarsController extends HttpServlet {
                 break;
 
             case "ADDorUPDATE":
-                if(request.getParameter("carId") == ""){
+                if(request.getParameter("carId").equals("")){
                     addCar(request, response);
                 } else {
                     updateCar(request, response);
