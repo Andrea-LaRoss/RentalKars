@@ -12,18 +12,22 @@ import org.hibernate.query.Query;
 
 
 public class RentDao {
+
+    private Transaction tx;
+    private Rent rent = null;
+
     public void saveRent(Rent Rent) {
-        Transaction transaction = null;
+        tx = null;
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
             // start a transaction
-            transaction = session.beginTransaction();
+            tx = session.beginTransaction();
             // save the Rent object
             session.save(Rent);
             // commit transaction
-            transaction.commit();
+            tx.commit();
         } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
+            if (tx != null) {
+                tx.rollback();
             }
             e.printStackTrace();
         }
@@ -35,7 +39,7 @@ public class RentDao {
 
     //Aggiornamento prenotazione
     public void updateReservation(Date startDate, Date endDate, Long id) {
-        Transaction tx = null;
+        tx = null;
         try(Session session = HibernateConfig.getSessionFactory().openSession()) {
             Query query = session.createQuery("Update Rent set startDate = :startDate, endDate = :endDate where id = :id");
             query.setParameter("startDate", startDate);
@@ -51,7 +55,7 @@ public class RentDao {
 
     //Cancellazione prenotazione
     public void deleteReservation(Long id) {
-        Transaction tx = null;
+        tx = null;
         try(Session session = HibernateConfig.getSessionFactory().openSession()) {
             Query query = session.createQuery("Delete from Rent where id = :id");
             query.setParameter("id", id);
@@ -67,8 +71,7 @@ public class RentDao {
     //Ritorna la lista di tutte le prenotazioni con i relativi utenti collegati
     public List <Rent> getRents() {
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
-            return session.createQuery("select r.startDate, r.endDate, u.firstName, u.lastName " +
-                    "from Rent as r inner join User as u").list();
+            return session.createQuery("from Rent", Rent.class).list();
         }
     }
 }

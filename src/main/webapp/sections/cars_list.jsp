@@ -16,6 +16,14 @@
         <th>Ultima prenotazione</th>
     </tr>
     <c:forEach var="tempCar" items="${carsList}">
+        <c:url var="update" value="CarsController">
+            <c:param name="command" value="LOAD"/>
+            <c:param name="carId" value="${tempUser.id}"/>
+        </c:url>
+        <c:url var="delete" value="CarsController">
+            <c:param name="command" value="DELETE"/>
+            <c:param name="carId" value="${tempUser.id}"/>
+        </c:url>
         <tr>
             <td>${tempCar.manufacturer}</td>
             <td>${tempCar.model}</td>
@@ -23,7 +31,7 @@
             <td>${tempCar.numPlate}</td>
             <td>${tempCar.regDate}</td>
             <td></td>
-            <td><a href="">Modifica</a> | <a href="">Elimina</a></td>
+            <td><a href="${update}">Modifica</a> | <a href="${delete}">Elimina</a></td>
         </tr>
     </c:forEach>
 </table>
