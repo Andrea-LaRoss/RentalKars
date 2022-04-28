@@ -17,7 +17,7 @@ public class CarsController extends HttpServlet {
 
     private CarDao cDao = new CarDao();
     private Car car = null;
-    private RequestDispatcher rd = null;
+    private RequestDispatcher rd;
 
     private Long carId;
     private String manufacturer;

@@ -15,10 +15,11 @@ import org.hibernate.query.Query;
 
 public class CarDao {
 
-    private Transaction tx = null;
+    private Transaction tx;
     private Car car;
 
     public void saveCar(Car car) {
+        tx = null;
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
             // start a transaction
             tx = session.beginTransaction();
@@ -36,7 +37,7 @@ public class CarDao {
 
 
     public Car selById(Long id) {
-
+        tx = null;
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
 
             tx = session.beginTransaction();
@@ -56,6 +57,7 @@ public class CarDao {
 
     //Selezione con targa
     public Car selPlate(String numPlate) {
+        tx = null;
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
             Query query = session.createQuery("from Car where num_plate = :numPlate");
@@ -73,6 +75,7 @@ public class CarDao {
 
 
     public void updateCar (String manufacturer, String model, String type, String numPlate, LocalDate regDate, Long id) {
+        tx = null;
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
             Query query = session.createQuery("Update Car set manufacturer =: manufacturer, model =: model, type =: type, numPlate =: numPlate, regDate =: regDate where id =: id");
@@ -89,6 +92,7 @@ public class CarDao {
 
     //Cancella modello
     public void deleteCar (Long id) {
+        tx = null;
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
             Query query = session.createQuery("delete from Car where id = :id");
@@ -109,6 +113,7 @@ public class CarDao {
     }
 
     public List <Car> getCars(String model) {
+        tx = null;
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
             Query query = session.createQuery("from Car where model =: model");

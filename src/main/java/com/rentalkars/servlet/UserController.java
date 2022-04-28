@@ -16,7 +16,7 @@ import java.util.List;
 public class UserController extends HttpServlet {
 
     private UserDao uDao = new UserDao();
-    private RequestDispatcher rd = null;
+    private RequestDispatcher rd;
 
     private User user = null;
     private Long userId;

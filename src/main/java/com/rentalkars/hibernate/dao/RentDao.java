@@ -14,7 +14,7 @@ import org.hibernate.query.Query;
 public class RentDao {
 
     private Transaction tx;
-    private Rent rent = null;
+    private Rent rent;
 
     public void saveRent(Rent Rent) {
         tx = null;
@@ -33,14 +33,30 @@ public class RentDao {
         }
     }
 
-    /*
-    * Query di selezione
-     */
+
+    public Rent selById(Long id) {
+        tx = null;
+        try(Session session = HibernateConfig.getSessionFactory().openSession()) {
+            tx = session.beginTransaction();
+            Query query = session.createQuery("from Rent where id = :id");
+            query.setParameter("id", id);
+
+            rent = (Rent) query.uniqueResult();
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        }
+        return rent;
+    }
+
 
     //Aggiornamento prenotazione
     public void updateReservation(Date startDate, Date endDate, Long id) {
         tx = null;
         try(Session session = HibernateConfig.getSessionFactory().openSession()) {
+            tx = session.beginTransaction();
             Query query = session.createQuery("Update Rent set startDate = :startDate, endDate = :endDate where id = :id");
             query.setParameter("startDate", startDate);
             query.setParameter("endDate", endDate);
@@ -57,6 +73,7 @@ public class RentDao {
     public void deleteReservation(Long id) {
         tx = null;
         try(Session session = HibernateConfig.getSessionFactory().openSession()) {
+            tx = session.beginTransaction();
             Query query = session.createQuery("Delete from Rent where id = :id");
             query.setParameter("id", id);
             query.executeUpdate();

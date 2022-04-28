@@ -12,10 +12,11 @@ import org.hibernate.query.Query;
 
 public class UserDao {
 
-    private Transaction tx = null;
-    private User user = null;
+    private Transaction tx;
+    private User user;
 
     public void saveUser(User user) {
+        tx = null;
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
             // start a transaction
             tx = session.beginTransaction();
@@ -32,7 +33,7 @@ public class UserDao {
     }
 
     public User selById(Long id) {
-
+        tx = null;
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
 
             tx = session.beginTransaction();
@@ -51,7 +52,7 @@ public class UserDao {
 
     //Controllo email durante registrazione utente
     public User selEmail(String email) {
-
+        tx = null;
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
             Query query = session.createQuery("from User where email = :email");
@@ -69,7 +70,7 @@ public class UserDao {
 
     //Controllo utente durante login
     public User selEmailPassword(String email, String password) {
-
+        tx = null;
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
             Query query = session.createQuery("From User where email = :email and password = :password");
@@ -89,7 +90,7 @@ public class UserDao {
 
     //Aggiorna utente
     public void updateUser(String email, String password, String firstName, String lastName, LocalDate birthday, Long id) {
-
+        tx = null;
         try(Session session = HibernateConfig.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
             Query query = session.createQuery("Update User set email = :email, password = :password, firstName = :firstName, lastName = :lastName, birthday = :birthday where id = :id");
@@ -118,7 +119,7 @@ public class UserDao {
 
     //Cancella utente
     public void deleteUser(Long id) {
-
+        tx = null;
         try(Session session = HibernateConfig.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
             Query query = session.createQuery("Delete from User u where u.id = :id");
@@ -139,7 +140,7 @@ public class UserDao {
     }
 
     public List < User > getUsers(String firstName) {
-
+        tx = null;
         try(Session session = HibernateConfig.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
             Query query = session.createQuery("from User where firstName =: firstName");
