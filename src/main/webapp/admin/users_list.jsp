@@ -8,18 +8,26 @@
 
 <table border="1">
     <tr>
-        <th>Nome Cognome</th>
+        <th>Nome</th>
         <th>Data di nascita</th>
         <th>Email</th>
         <th>Ultima prenotazione</th>
     </tr>
     <c:forEach var="tempUser" items="${usersList}">
+        <c:url var="update" value="UserController">
+            <c:param name="command" value="LOAD"/>
+            <c:param name="userId" value="${tempUser.id}"/>
+        </c:url>
+        <c:url var="delete" value="UserController">
+            <c:param name="command" value="DELETE"/>
+            <c:param name="userId" value="${tempUser.id}"/>
+        </c:url>
         <tr>
             <td>${tempUser.firstName} ${tempUser.lastName}</td>
             <td>${tempUser.birthday}</td>
             <td>${tempUser.email}</td>
             <td></td>
-            <td><a href="">Modifica</a> | <a href="">Elimina</a></td>
+            <td><a href="${update}">Modifica</a> | <a href="${delete}" onclick="if(!(confirm('Sei sicuro?'))) return false">Elimina</a></td>
         </tr>
 
     </c:forEach>

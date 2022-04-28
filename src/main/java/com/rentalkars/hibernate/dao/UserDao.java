@@ -1,5 +1,6 @@
 package com.rentalkars.hibernate.dao;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.hibernate.Session;
@@ -28,6 +29,26 @@ public class UserDao {
         }
     }
 
+    public User selById(Long id) {
+        Transaction tx = null;
+        User user = null;
+
+        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
+
+            tx = session.beginTransaction();
+            Query query = session.createQuery("from User where id = :id");
+            query.setParameter("id", id);
+
+            user = (User) query.uniqueResult();
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        }
+        return user;
+    }
+
     //Controllo email durante registrazione utente
     public User selEmail(String email) {
         Transaction tx = null;
@@ -35,7 +56,7 @@ public class UserDao {
 
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
-            Query query = session.createQuery("Select * from User where email = :email");
+            Query query = session.createQuery("from User where email = :email");
             query.setParameter("email", email);
 
             user = (User) query.uniqueResult();
@@ -75,7 +96,8 @@ public class UserDao {
         User user = null;
 
         try(Session session = HibernateConfig.getSessionFactory().openSession()) {
-            Query query = session.createQuery("Select * from User where first_name like :firstName %");
+            tx = session.beginTransaction();
+            Query query = session.createQuery("from User where first_name like :firstName %");
             query.setParameter("firstName", firstName);
 
             user = (User) query.uniqueResult();
@@ -89,42 +111,41 @@ public class UserDao {
     }
 
 
-    //Aggiorna email
-    public void updateEmail(String email, Long id) {
-        Transaction tx = null;
-        try(Session session = HibernateConfig.getSessionFactory().openSession()) {
-            Query query = session.createQuery("Update User set email = :email where id = :id");
-            query.setParameter("email", email);
-            query.setParameter("id", id);
-            query.executeUpdate();
-        } catch (Exception e) {
-            if (tx != null) {
-                tx.rollback();
-            }
-            e.printStackTrace();
-        }
-    }
+    //Aggiorna utente
+    public void updateUser(String email, String password, String firstName, String lastName, LocalDate birthday, Long id) {
 
-    //Aggiorna password
-    public void updatePassword(String password, Long id) {
         Transaction tx = null;
         try(Session session = HibernateConfig.getSessionFactory().openSession()) {
-            Query query = session.createQuery("Update User set password = :password where id = :id");
+            tx = session.beginTransaction();
+            Query query = session.createQuery("Update User set email = :email, password = :password, firstName = :firstName, lastName = :lastName, birthday = :birthday where id = :id");
+
+            query.setParameter("email", email);
             query.setParameter("password", password);
+            query.setParameter("firstName", firstName);
+            query.setParameter("lastName", lastName);
+            query.setParameter("birthday", birthday);
             query.setParameter("id", id);
             query.executeUpdate();
+
         } catch (Exception e) {
+
             if (tx != null) {
+
                 tx.rollback();
+
             }
+
             e.printStackTrace();
+
         }
+
     }
 
     //Cancella utente
     public void deleteUser(Long id) {
         Transaction tx = null;
         try(Session session = HibernateConfig.getSessionFactory().openSession()) {
+            tx = session.beginTransaction();
             Query query = session.createQuery("Delete from User u where u.id = :id");
             query.setParameter("id", id);
             query.executeUpdate();
