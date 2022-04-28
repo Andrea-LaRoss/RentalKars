@@ -1,10 +1,12 @@
 package com.rentalkars.hibernate.dao;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import java.util.Date;
 
 import com.rentalkars.hibernate.entity.Car;
+import com.rentalkars.hibernate.entity.User;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -12,36 +14,34 @@ import com.rentalkars.hibernate.utils.HibernateConfig;
 import org.hibernate.query.Query;
 
 public class CarDao {
+
+    private Transaction tx = null;
+    private Car car;
+
     public void saveCar(Car car) {
-        Transaction transaction = null;
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
             // start a transaction
-            transaction = session.beginTransaction();
+            tx = session.beginTransaction();
             // save the Car object
             session.save(car);
             // commit transaction
-            transaction.commit();
+            tx.commit();
         } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
+            if (tx != null) {
+                tx.rollback();
             }
             e.printStackTrace();
         }
     }
 
-    /*
-     * Query di selezione
-     */
 
-    //Selezione con produttore
-    public Car selManufacturer(String manufacturer) {
-        Transaction tx = null;
-        Car car = null;
+    public Car selById(Long id) {
 
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
+
             tx = session.beginTransaction();
-            Query query = session.createQuery("Select * from Car where manufacturer = :manufacturer");
-            query.setParameter("manufacturer", manufacturer);
+            Query query = session.createQuery("from Car where id = :id");
+            query.setParameter("id", id);
 
             car = (Car) query.uniqueResult();
         } catch (Exception e) {
@@ -53,54 +53,12 @@ public class CarDao {
         return car;
     }
 
-    //Selezione con modello
-    public Car selModel(String model) {
-        Transaction tx = null;
-        Car car = null;
-
-        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
-            tx = session.beginTransaction();
-            Query query = session.createQuery("Select * from Car where model = :model");
-            query.setParameter("model", model);
-
-            car = (Car) query.uniqueResult();
-        } catch (Exception e) {
-            if (tx != null) {
-                tx.rollback();
-            }
-            e.printStackTrace();
-        }
-        return car;
-    }
-
-    //Selezione con tipo
-    public Car selType (String type) {
-        Transaction tx = null;
-        Car car = null;
-
-        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
-            tx = session.beginTransaction();
-            Query query = session.createQuery("Select * from Car where type = :type");
-            query.setParameter("type", type);
-
-            car = (Car) query.uniqueResult();
-        } catch (Exception e) {
-            if (tx != null) {
-                tx.rollback();
-            }
-            e.printStackTrace();
-        }
-        return car;
-    }
 
     //Selezione con targa
     public Car selPlate(String numPlate) {
-        Transaction tx = null;
-        Car car = null;
-
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
-            Query query = session.createQuery("Select * from Car where num_plate = :numPlate");
+            Query query = session.createQuery("from Car where num_plate = :numPlate");
             query.setParameter("numPlate", numPlate);
 
             car = (Car) query.uniqueResult();
@@ -113,35 +71,28 @@ public class CarDao {
         return car;
     }
 
-    //Selezione con data di immatricolazione
-    public Car selRegDat(Date regDate) {
-        Transaction tx = null;
-        Car car = null;
 
+    public void updateCar (String manufacturer, String model, String type, String numPlate, LocalDate regDate, Long id) {
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
-            Query query = session.createQuery("Select * from Car where reg_date = :regDate");
+            Query query = session.createQuery("Update Car set manufacturer =: manufacturer, model =: model, type =: type, numPlate =: numPlate, regDate =: regDate where id =: id");
+            query.setParameter("manufacturer", manufacturer);
+            query.setParameter("model", model);
+            query.setParameter("type", type);
+            query.setParameter("numPlate", numPlate);
             query.setParameter("regDate", regDate);
-
-            car = (Car) query.uniqueResult();
-        } catch (Exception e) {
-            if (tx != null) {
-                tx.rollback();
-            }
-            e.printStackTrace();
+            query.setParameter("id", id);
+            query.executeUpdate();
         }
-        return car;
     }
+
 
     //Cancella modello
     public void deleteCar (Long id) {
-        Transaction tx = null;
-
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
             Query query = session.createQuery("delete from Car where id = :id");
             query.setParameter("id", id);
-
         } catch (Exception e) {
             if (tx != null) {
                 tx.rollback();
@@ -154,6 +105,15 @@ public class CarDao {
     public List <Car> getCars() {
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
             return session.createQuery("from Car", Car.class).list();
+        }
+    }
+
+    public List <Car> getCars(String model) {
+        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
+            tx = session.beginTransaction();
+            Query query = session.createQuery("from Car where model =: model");
+            query.setParameter("model", model);
+            return query.getResultList();
         }
     }
 }

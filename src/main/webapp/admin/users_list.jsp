@@ -4,7 +4,13 @@
 <h2>Lista utenti</h2>
 
 <!-- SE l'utente è admin mostra il tasto-->
+<form action="UserController">
+    <input type="hidden" name="command" value="SEARCH">
+    <input type="text" name="nameSearch" placeholder="Inserisci un nome">
+    <input type="submit" value="cerca">
+</form>   |
 <a href="admin/manage_users.jsp"><strong>Aggiungi</strong></a> <br>
+
 
 <table border="1">
     <tr>

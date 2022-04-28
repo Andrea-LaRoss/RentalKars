@@ -61,12 +61,17 @@ public class UserController extends HttpServlet {
                 deleteUser(request, response);
                 break;
 
+            case "SEARCH":
+                searchUser(request, response);
+                break;
+
             default:
                 listUsers(request, response);
                 break;
 
         }
     }
+
 
     private void listUsers(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -78,6 +83,7 @@ public class UserController extends HttpServlet {
         rd.forward(request, response);
 
     }
+
 
     private void addUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -94,6 +100,7 @@ public class UserController extends HttpServlet {
 
     }
 
+
     private void validateUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         email = request.getParameter("email");
@@ -106,6 +113,7 @@ public class UserController extends HttpServlet {
         rd.forward(request, response);
     }
 
+
     private void loadUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         userId = Long.valueOf(request.getParameter("userId"));
@@ -117,6 +125,7 @@ public class UserController extends HttpServlet {
         rd.forward(request, response);
 
     }
+
 
     private void updateUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -134,6 +143,7 @@ public class UserController extends HttpServlet {
 
     }
 
+
     private void deleteUser(HttpServletRequest request, HttpServletResponse response) throws  ServletException, IOException {
         userId = Long.valueOf(request.getParameter("userId"));
 
@@ -142,6 +152,20 @@ public class UserController extends HttpServlet {
         listUsers(request, response);
 
     }
+
+
+    private void searchUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        firstName = request.getParameter("nameSearch");
+
+
+        List<User> userList = uDao.getUsers(firstName);
+
+        request.setAttribute("usersList", userList);
+
+        rd = request.getRequestDispatcher("/admin/users_list.jsp");
+        rd.forward(request, response);
+    }
+
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

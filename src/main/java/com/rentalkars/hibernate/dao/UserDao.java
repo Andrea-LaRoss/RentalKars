@@ -12,8 +12,10 @@ import org.hibernate.query.Query;
 
 public class UserDao {
 
+    private Transaction tx = null;
+    private User user = null;
+
     public void saveUser(User user) {
-        Transaction tx = null;
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
             // start a transaction
             tx = session.beginTransaction();
@@ -30,8 +32,6 @@ public class UserDao {
     }
 
     public User selById(Long id) {
-        Transaction tx = null;
-        User user = null;
 
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
 
@@ -51,8 +51,6 @@ public class UserDao {
 
     //Controllo email durante registrazione utente
     public User selEmail(String email) {
-        Transaction tx = null;
-        User user = null;
 
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
@@ -71,8 +69,6 @@ public class UserDao {
 
     //Controllo utente durante login
     public User selEmailPassword(String email, String password) {
-        Transaction tx = null;
-        User user = null;
 
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
@@ -90,31 +86,10 @@ public class UserDao {
         return user;
     }
 
-    //Ricerca via nome
-    public User selName(String firstName) {
-        Transaction tx = null;
-        User user = null;
-
-        try(Session session = HibernateConfig.getSessionFactory().openSession()) {
-            tx = session.beginTransaction();
-            Query query = session.createQuery("from User where first_name like :firstName %");
-            query.setParameter("firstName", firstName);
-
-            user = (User) query.uniqueResult();
-        } catch (Exception e) {
-            if (tx != null) {
-                tx.rollback();
-            }
-            e.printStackTrace();
-        }
-        return user;
-    }
-
 
     //Aggiorna utente
     public void updateUser(String email, String password, String firstName, String lastName, LocalDate birthday, Long id) {
 
-        Transaction tx = null;
         try(Session session = HibernateConfig.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
             Query query = session.createQuery("Update User set email = :email, password = :password, firstName = :firstName, lastName = :lastName, birthday = :birthday where id = :id");
@@ -143,7 +118,7 @@ public class UserDao {
 
     //Cancella utente
     public void deleteUser(Long id) {
-        Transaction tx = null;
+
         try(Session session = HibernateConfig.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
             Query query = session.createQuery("Delete from User u where u.id = :id");
@@ -160,6 +135,16 @@ public class UserDao {
     public List < User > getUsers() {
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
             return session.createQuery("from User", User.class).list();
+        }
+    }
+
+    public List < User > getUsers(String firstName) {
+
+        try(Session session = HibernateConfig.getSessionFactory().openSession()) {
+            tx = session.beginTransaction();
+            Query query = session.createQuery("from User where firstName =: firstName");
+            query.setParameter("firstName", firstName);
+            return query.getResultList();
         }
     }
 
