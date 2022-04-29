@@ -26,7 +26,7 @@ public class Car implements Serializable {
     @Column(name = "type", nullable = false)
     private String type;
 
-    @Column(name = "num_plate", nullable = false)
+    @Column(name = "num_plate", nullable = false, length = 128, unique = true)
     private String numPlate;
 
     @Column(name = "reg_date")

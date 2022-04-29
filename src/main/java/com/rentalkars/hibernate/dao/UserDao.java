@@ -10,7 +10,11 @@ import com.rentalkars.hibernate.entity.User;
 import com.rentalkars.hibernate.utils.HibernateConfig;
 import org.hibernate.query.Query;
 
-public class UserDao {
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.*;
+
+public class UserDao extends AbstractDao<User, Long>{
 
     private Transaction tx;
     private User user;
@@ -18,11 +22,28 @@ public class UserDao {
     public void saveUser(User user) {
         tx = null;
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
-            // start a transaction
+
             tx = session.beginTransaction();
-            // save the User object
+
             session.save(user);
-            // commit transaction
+
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        }
+    }
+
+    public void updateUser(User user) {
+        tx = null;
+        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
+
+            tx = session.beginTransaction();
+
+            session.merge(user);
+
             tx.commit();
         } catch (Exception e) {
             if (tx != null) {
@@ -87,35 +108,6 @@ public class UserDao {
         return user;
     }
 
-
-    //Aggiorna utente
-    public void updateUser(String email, String password, String firstName, String lastName, LocalDate birthday, Long id) {
-        tx = null;
-        try(Session session = HibernateConfig.getSessionFactory().openSession()) {
-            tx = session.beginTransaction();
-            Query query = session.createQuery("Update User set email = :email, password = :password, firstName = :firstName, lastName = :lastName, birthday = :birthday where id = :id");
-
-            query.setParameter("email", email);
-            query.setParameter("password", password);
-            query.setParameter("firstName", firstName);
-            query.setParameter("lastName", lastName);
-            query.setParameter("birthday", birthday);
-            query.setParameter("id", id);
-            query.executeUpdate();
-
-        } catch (Exception e) {
-
-            if (tx != null) {
-
-                tx.rollback();
-
-            }
-
-            e.printStackTrace();
-
-        }
-
-    }
 
     //Cancella utente
     public void deleteUser(Long id) {

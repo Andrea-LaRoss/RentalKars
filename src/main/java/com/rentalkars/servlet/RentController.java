@@ -1,18 +1,13 @@
 package com.rentalkars.servlet;
 
-import com.rentalkars.hibernate.dao.CarDao;
 import com.rentalkars.hibernate.dao.RentDao;
-import com.rentalkars.hibernate.entity.Car;
 import com.rentalkars.hibernate.entity.Rent;
-import com.rentalkars.hibernate.entity.User;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.OffsetTime;
 import java.time.Period;
 import java.util.List;
 
@@ -32,7 +27,6 @@ public class RentController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
         String command = request.getParameter("command");
         if(command == null) {
             command = "LIST";
@@ -79,12 +73,11 @@ public class RentController extends HttpServlet {
         startDate = LocalDate.parse(request.getParameter("startDate"));
         endDate = LocalDate.parse(request.getParameter("endDate"));
 
-        checkDates(endDate, startDate, request, response);
-        checkDates(startDate, LocalDate.now(), request, response);
-
+        checkBefore(endDate, startDate, request, response);
+        checkBefore(startDate, LocalDate.now(), request, response);
     }
 
-    private void checkDates (LocalDate d1, LocalDate d2, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void checkBefore (LocalDate d1, LocalDate d2, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if(d1.isBefore(d2)) {
             errorMsg = "La data finale inserita non è valida. Riprova";
             request.setAttribute("errorMsg", errorMsg);
