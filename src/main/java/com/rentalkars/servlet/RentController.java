@@ -101,7 +101,7 @@ public class RentController extends HttpServlet {
             rd = request.getRequestDispatcher("/user/manage_reservations.jsp");
             rd.forward(request, response);
         }
-            rDao.updateReservation(startDate, endDate, rentId);
+            rDao.updateReservation(rent);
             rd = request.getRequestDispatcher("/sections/reservations_list.jsp");
             rd.forward(request, response);
     }
@@ -120,7 +120,11 @@ public class RentController extends HttpServlet {
 
     private void deleteReservation(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         rentId = Long.valueOf(request.getParameter("rentId"));
-        rDao.deleteReservation(rentId);
+
+        rent = rDao.selById(rentId);
+
+        rDao.removeReservation(rent);
+
         listRents(request, response);
     }
 

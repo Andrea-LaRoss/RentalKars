@@ -3,6 +3,7 @@ package com.rentalkars.hibernate.dao;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.rentalkars.hibernate.entity.Car;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -18,6 +19,7 @@ public class UserDao extends AbstractDao<User, Long>{
 
     private Transaction tx;
     private User user;
+
 
     public void saveUser(User user) {
         tx = null;
@@ -36,6 +38,7 @@ public class UserDao extends AbstractDao<User, Long>{
         }
     }
 
+
     public void updateUser(User user) {
         tx = null;
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
@@ -53,52 +56,34 @@ public class UserDao extends AbstractDao<User, Long>{
         }
     }
 
-    public User selById(Long id) {
+
+    public void removeUser(User user){
         tx = null;
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
 
             tx = session.beginTransaction();
-            Query query = session.createQuery("from User where id = :id");
-            query.setParameter("id", id);
 
-            user = (User) query.uniqueResult();
+            session.remove(user);
+
+            tx.commit();
         } catch (Exception e) {
             if (tx != null) {
                 tx.rollback();
             }
             e.printStackTrace();
         }
-        return user;
     }
 
-    //Controllo email durante registrazione utente
-    public User selEmail(String email) {
+
+    public User selById(Long id){
         tx = null;
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
+
             tx = session.beginTransaction();
-            Query query = session.createQuery("from User where email = :email");
-            query.setParameter("email", email);
 
-            user = (User) query.uniqueResult();
-        } catch (Exception e) {
-            if (tx != null) {
-                tx.rollback();
-            }
-            e.printStackTrace();
-        }
-        return user;
-    }
+            user = session.get(User.class, id);
 
-    //Controllo utente durante login
-    public User selEmailPassword(String email, String password) {
-        tx = null;
-        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
-            tx = session.beginTransaction();
-            Query query = session.createQuery("From User where email = :email and password = :password");
-            query.setParameter("email", email);
-            query.setParameter("password", password);
-
-            user = (User) query.uniqueResult();
+            tx.commit();
         } catch (Exception e) {
             if (tx != null) {
                 tx.rollback();
@@ -109,43 +94,63 @@ public class UserDao extends AbstractDao<User, Long>{
     }
 
 
-    //Cancella utente
-    public void deleteUser(Long id) {
+    public User selByEmail(String email) {
         tx = null;
-        try(Session session = HibernateConfig.getSessionFactory().openSession()) {
+        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
+
             tx = session.beginTransaction();
-            Query query = session.createQuery("Delete from User u where u.id = :id");
-            query.setParameter("id", id);
-            query.executeUpdate();
+
+            user = session.get(User.class, email);
+
+            tx.commit();
         } catch (Exception e) {
             if (tx != null) {
                 tx.rollback();
             }
             e.printStackTrace();
         }
+        return user;
     }
 
-    public List < User > getUsers() {
+
+    public List<User> selByFirstName(String firstName) {
+        tx = null;
+        List<User> users = null;
+        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
+
+            tx = session.beginTransaction();
+
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<User> query = builder.createQuery(User.class);
+            Root<User> set = query.from(User.class);
+            query.select(set).where(builder.equal(set.get("firstName"), firstName));
+            users = session.createQuery(query).getResultList();
+
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        }
+        return users;
+    }
+
+
+    public List <User> getUsers() {
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
             return session.createQuery("from User", User.class).list();
         }
     }
 
-    public List < User > getUsers(String firstName) {
+    public List <User> getUsers(String firstName) {
         tx = null;
-        try(Session session = HibernateConfig.getSessionFactory().openSession()) {
+        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
-            Query query = session.createQuery("from User where firstName =: firstName");
+            Query query = session.createQuery("from User where firstName like %:firstName%");
             query.setParameter("firstName", firstName);
             return query.getResultList();
         }
     }
 
-    //Ritorna tutti gli utenti con l'ultima prenotazione effettuata
-   /* public List <User> getUsersRents() {
-        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
-            return session.createQuery("Select u.first_name, u.last_name, u.email, max(r.id) " +
-                    "from User as u inner join rent as r where id = r.user_id").list();
-       }
-    }*/
 }

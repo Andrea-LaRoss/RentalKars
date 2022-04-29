@@ -18,13 +18,6 @@ public class CarsController extends HttpServlet {
     private Car car;
     private RequestDispatcher rd;
 
-    private Long carId;
-    private String manufacturer;
-    private String model;
-    private String type;
-    private String numPlate;
-    private LocalDate regDate;
-    
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -80,13 +73,14 @@ public class CarsController extends HttpServlet {
 
     private void addCar(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        manufacturer = request.getParameter("manufacturer");
-        model = request.getParameter("model");
-        type = request.getParameter("type");
-        numPlate = request.getParameter("numPlate");
-        regDate = LocalDate.parse(request.getParameter("regDate"));
+       String manufacturer = request.getParameter("manufacturer");
+       String model = request.getParameter("model");
+       String type = request.getParameter("type");
+       String numPlate = request.getParameter("numPlate");
+       LocalDate regDate = LocalDate.parse(request.getParameter("regDate"));
 
         Car car = new Car(manufacturer, model, type, numPlate, regDate);
+
         cDao.saveCar(car);
 
         listCars(request, response);
@@ -95,7 +89,7 @@ public class CarsController extends HttpServlet {
 
     private void loadCar(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        carId = Long.valueOf(request.getParameter("carId"));
+        Long carId = Long.valueOf(request.getParameter("carId"));
 
         car = cDao.selById(carId);
 
@@ -108,15 +102,23 @@ public class CarsController extends HttpServlet {
 
     private void updateCar(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        carId = Long.valueOf(request.getParameter("carId"));
+        Long carId = Long.valueOf(request.getParameter("carId"));
 
-        manufacturer = request.getParameter("manufacturer");
-        model = request.getParameter("model");
-        type = request.getParameter("type");
-        numPlate = request.getParameter("numPlate");
-        regDate = LocalDate.parse(request.getParameter("regDate"));
+        String manufacturer = request.getParameter("manufacturer");
+        String model = request.getParameter("model");
+        String type = request.getParameter("type");
+        String numPlate = request.getParameter("numPlate");
+        LocalDate regDate = LocalDate.parse(request.getParameter("regDate"));
 
-        cDao.updateCar(manufacturer, model, type, numPlate, regDate, carId);
+        car = cDao.selById(carId);
+
+        car.setManufacturer(manufacturer);
+        car.setModel(model);
+        car.setType(type);
+        car.setNumPlate(numPlate);
+        car.setRegDate(regDate);
+
+        cDao.updateCar(car);
 
         listCars(request, response);
 
@@ -124,9 +126,11 @@ public class CarsController extends HttpServlet {
     
 
     private void deleteCar(HttpServletRequest request, HttpServletResponse response) throws  ServletException, IOException {
-        carId = Long.valueOf(request.getParameter("carId"));
+        Long carId = Long.valueOf(request.getParameter("carId"));
 
-        cDao.deleteCar(carId);
+        car = cDao.selById(carId);
+
+        cDao.removeCar(car);
 
         listCars(request, response);
 
@@ -134,7 +138,7 @@ public class CarsController extends HttpServlet {
     
 
     private void searchCar(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        model = request.getParameter("nameSearch");
+        String model = request.getParameter("nameSearch");
 
 
         List<Car> carList = cDao.getCars(model);

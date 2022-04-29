@@ -3,6 +3,7 @@ package com.rentalkars.hibernate.dao;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.rentalkars.hibernate.entity.User;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -19,11 +20,49 @@ public class RentDao {
     public void saveRent(Rent Rent) {
         tx = null;
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
-            // start a transaction
+
             tx = session.beginTransaction();
-            // save the Rent object
             session.save(Rent);
-            // commit transaction
+            tx.commit();
+
+        } catch (Exception e) {
+
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+
+        }
+    }
+
+
+    public void updateReservation(Rent rent) {
+        tx = null;
+        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
+
+            tx = session.beginTransaction();
+            session.merge(rent);
+            tx.commit();
+
+        } catch (Exception e) {
+
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+
+        }
+    }
+
+
+    public void removeReservation(Rent rent){
+        tx = null;
+        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
+
+            tx = session.beginTransaction();
+
+            session.remove(rent);
+
             tx.commit();
         } catch (Exception e) {
             if (tx != null) {
@@ -34,56 +73,26 @@ public class RentDao {
     }
 
 
-    public Rent selById(Long id) {
+    public Rent selById(Long id){
         tx = null;
-        try(Session session = HibernateConfig.getSessionFactory().openSession()) {
-            tx = session.beginTransaction();
-            Query query = session.createQuery("from Rent where id = :id");
-            query.setParameter("id", id);
+        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
 
-            rent = (Rent) query.uniqueResult();
+            tx = session.beginTransaction();
+            rent = session.get(Rent.class, id);
+            tx.commit();
+
         } catch (Exception e) {
+
             if (tx != null) {
                 tx.rollback();
             }
             e.printStackTrace();
+
         }
+
         return rent;
     }
 
-
-    //Aggiornamento prenotazione
-    public void updateReservation(LocalDate startDate, LocalDate endDate, Long id) {
-        tx = null;
-        try(Session session = HibernateConfig.getSessionFactory().openSession()) {
-            tx = session.beginTransaction();
-            Query query = session.createQuery("Update Rent set startDate = :startDate, endDate = :endDate where id = :id");
-            query.setParameter("startDate", startDate);
-            query.setParameter("endDate", endDate);
-            query.executeUpdate();
-        } catch (Exception e) {
-            if (tx != null) {
-                tx.rollback();
-            }
-            e.printStackTrace();
-        }
-    }
-
-    //Cancellazione prenotazione
-    public void deleteReservation(Long id) {
-        tx = null;
-        try(Session session = HibernateConfig.getSessionFactory().openSession()) {
-            tx = session.beginTransaction();
-            Query query = session.createQuery("Delete from Rent where id = :id");
-            query.setParameter("id", id);
-            query.executeUpdate();
-        } catch (Exception e) {
-            if (tx != null) {
-                tx.rollback();
-            }
-            e.printStackTrace();
-        }
-    }
 
     //Ritorna la lista di tutte le prenotazioni con i relativi utenti collegati
     public List <Rent> getRents() {
@@ -91,4 +100,5 @@ public class RentDao {
             return session.createQuery("from Rent", Rent.class).list();
         }
     }
+
 }

@@ -18,14 +18,6 @@ public class UserController extends HttpServlet {
     private UserDao uDao = new UserDao();
     private RequestDispatcher rd;
 
-    private User user = null;
-    private Long userId;
-    private String email;
-    private String password;
-    private String firstName;
-    private String lastName;
-    private LocalDate birthday;
-
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -87,13 +79,13 @@ public class UserController extends HttpServlet {
 
     private void addUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        email = request.getParameter("email");
-        password = request.getParameter("password");
-        firstName = request.getParameter("firstName");
-        lastName = request.getParameter("lastName");
-        birthday = LocalDate.parse(request.getParameter("birthday"));
+        String email = request.getParameter("email");
+        String password = request.getParameter("password");
+        String firstName = request.getParameter("firstName");
+        String lastName = request.getParameter("lastName");
+        LocalDate birthday = LocalDate.parse(request.getParameter("birthday"));
 
-        user = new User(email, password, firstName, lastName, birthday, false);
+        User user = new User(email, password, firstName, lastName, birthday, false);
         uDao.saveUser(user);
 
         listUsers(request, response);
@@ -103,11 +95,11 @@ public class UserController extends HttpServlet {
 
     private void validateUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        email = request.getParameter("email");
-        password = request.getParameter("password");
+        String email = request.getParameter("email");
+        String password = request.getParameter("password");
 
-        user = uDao.selEmailPassword(email, password);
-        request.setAttribute("loggedUser", user);
+        //User user = uDao.selEmailPassword(email, password);
+       //request.setAttribute("loggedUser", user);
 
         rd = request.getRequestDispatcher("/index.jsp");
         rd.forward(request, response);
@@ -116,9 +108,9 @@ public class UserController extends HttpServlet {
 
     private void loadUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        userId = Long.valueOf(request.getParameter("userId"));
+        Long userId = Long.valueOf(request.getParameter("userId"));
 
-        user = uDao.selById(userId);
+        User user = uDao.selById(userId);
 
         request.setAttribute("userUpdate", user);
         rd = request.getRequestDispatcher("/admin/manage_users.jsp");
@@ -129,15 +121,23 @@ public class UserController extends HttpServlet {
 
     private void updateUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        userId = Long.valueOf(request.getParameter("userId"));
+        Long userId = Long.valueOf(request.getParameter("userId"));
 
-        email = request.getParameter("email");
-        password = request.getParameter("password");
-        firstName = request.getParameter("firstName");
-        lastName = request.getParameter("lastName");
-        birthday = LocalDate.parse(request.getParameter("birthday"));
+        String email = request.getParameter("email");
+        String password = request.getParameter("password");
+        String firstName = request.getParameter("firstName");
+        String lastName = request.getParameter("lastName");
+        LocalDate birthday = LocalDate.parse(request.getParameter("birthday"));
 
-        uDao.updateUser(email, password, firstName, lastName, birthday, userId);
+        User user = uDao.selById(userId);
+
+        user.setEmail(email);
+        user.setPassword(password);
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setBirthday(birthday);
+
+        uDao.updateUser(user);
 
         listUsers(request, response);
 
@@ -145,9 +145,11 @@ public class UserController extends HttpServlet {
 
 
     private void deleteUser(HttpServletRequest request, HttpServletResponse response) throws  ServletException, IOException {
-        userId = Long.valueOf(request.getParameter("userId"));
+        Long userId = Long.valueOf(request.getParameter("userId"));
 
-        uDao.deleteUser(userId);
+        User user = uDao.selById(userId);
+
+        uDao.removeUser(user);
 
         listUsers(request, response);
 
@@ -155,7 +157,7 @@ public class UserController extends HttpServlet {
 
 
     private void searchUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        firstName = request.getParameter("nameSearch");
+        String firstName = request.getParameter("nameSearch");
 
 
         List<User> userList = uDao.getUsers(firstName);

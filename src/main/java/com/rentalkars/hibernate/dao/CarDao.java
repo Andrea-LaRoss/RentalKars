@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Date;
 
 import com.rentalkars.hibernate.entity.Car;
-import com.rentalkars.hibernate.entity.User;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -21,11 +20,30 @@ public class CarDao {
     public void saveCar(Car car) {
         tx = null;
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
-            // start a transaction
+
             tx = session.beginTransaction();
-            // save the Car object
             session.save(car);
-            // commit transaction
+            tx.commit();
+
+        } catch (Exception e) {
+
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+
+        }
+    }
+
+
+    public void updateCar(Car car) {
+        tx = null;
+        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
+
+            tx = session.beginTransaction();
+
+            session.merge(car);
+
             tx.commit();
         } catch (Exception e) {
             if (tx != null) {
@@ -36,15 +54,33 @@ public class CarDao {
     }
 
 
-    public Car selById(Long id) {
+    public void removeCar(Car car){
         tx = null;
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
 
             tx = session.beginTransaction();
-            Query query = session.createQuery("from Car where id = :id");
-            query.setParameter("id", id);
 
-            car = (Car) query.uniqueResult();
+            session.remove(car);
+
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        }
+    }
+
+
+    public Car selById(Long id){
+        tx = null;
+        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
+
+            tx = session.beginTransaction();
+
+            car = session.get(Car.class, id);
+
+            tx.commit();
         } catch (Exception e) {
             if (tx != null) {
                 tx.rollback();
@@ -55,15 +91,15 @@ public class CarDao {
     }
 
 
-    //Selezione con targa
-    public Car selPlate(String numPlate) {
+    public Car selByPlate(String plate) {
         tx = null;
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
-            tx = session.beginTransaction();
-            Query query = session.createQuery("from Car where num_plate = :numPlate");
-            query.setParameter("numPlate", numPlate);
 
-            car = (Car) query.uniqueResult();
+            tx = session.beginTransaction();
+
+            car = session.get(Car.class, plate);
+
+            tx.commit();
         } catch (Exception e) {
             if (tx != null) {
                 tx.rollback();
@@ -73,37 +109,6 @@ public class CarDao {
         return car;
     }
 
-
-    public void updateCar (String manufacturer, String model, String type, String numPlate, LocalDate regDate, Long id) {
-        tx = null;
-        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
-            tx = session.beginTransaction();
-            Query query = session.createQuery("Update Car set manufacturer =: manufacturer, model =: model, type =: type, numPlate =: numPlate, regDate =: regDate where id =: id");
-            query.setParameter("manufacturer", manufacturer);
-            query.setParameter("model", model);
-            query.setParameter("type", type);
-            query.setParameter("numPlate", numPlate);
-            query.setParameter("regDate", regDate);
-            query.setParameter("id", id);
-            query.executeUpdate();
-        }
-    }
-
-
-    //Cancella modello
-    public void deleteCar (Long id) {
-        tx = null;
-        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
-            tx = session.beginTransaction();
-            Query query = session.createQuery("delete from Car where id = :id");
-            query.setParameter("id", id);
-        } catch (Exception e) {
-            if (tx != null) {
-                tx.rollback();
-            }
-            e.printStackTrace();
-        }
-    }
 
     //Ritorna la lista di tutte le auto con l'ultima prenotazione effettuata su di esse
     public List <Car> getCars() {
@@ -116,7 +121,7 @@ public class CarDao {
         tx = null;
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
-            Query query = session.createQuery("from Car where model =: model");
+            Query query = session.createQuery("from Car where model = :model");
             query.setParameter("model", model);
             return query.getResultList();
         }
