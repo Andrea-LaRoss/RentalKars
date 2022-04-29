@@ -16,11 +16,11 @@ public class Rent implements Serializable {
     private long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "car_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "car_id", referencedColumnName = "id")
     private Car car;
 
     @Column(name = "start_date")
@@ -31,6 +31,11 @@ public class Rent implements Serializable {
 
     public Rent(){
 
+    }
+
+    public Rent(LocalDate startDate, LocalDate endDate){
+        this.startDate = startDate;
+        this.endDate = endDate;
     }
 
 

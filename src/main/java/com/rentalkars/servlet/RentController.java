@@ -75,6 +75,12 @@ public class RentController extends HttpServlet {
 
         checkBefore(endDate, startDate, request, response);
         checkBefore(startDate, LocalDate.now(), request, response);
+
+        rent = new Rent(startDate, endDate);
+
+        rDao.saveRent(rent);
+        listRents(request, response);
+
     }
 
     private void checkBefore (LocalDate d1, LocalDate d2, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -102,8 +108,8 @@ public class RentController extends HttpServlet {
             rd.forward(request, response);
         }
             rDao.updateReservation(rent);
-            rd = request.getRequestDispatcher("/sections/reservations_list.jsp");
-            rd.forward(request, response);
+            listRents(request, response);
+
     }
 
 

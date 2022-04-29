@@ -24,7 +24,8 @@
             <c:param name="rentId" value="${tempRent.id}"/>
         </c:url>
         <tr>
-            <td></td>
+            <td>${tempRent.startDate}</td>
+            <td>${tempRent.endDate}</td>
             <td><a href="${update}">Modifica</a> | <a href="${delete}" onclick="if(!(confirm('Sei sicuro?'))) return false">Elimina</a></td>
         </tr>
     </c:forEach>
