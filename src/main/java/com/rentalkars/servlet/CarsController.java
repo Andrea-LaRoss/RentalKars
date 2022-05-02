@@ -15,8 +15,9 @@ import java.util.List;
 public class CarsController extends HttpServlet {
 
     private final CarDao cDao = new CarDao();
-    private Car car;
     private RequestDispatcher rd;
+
+    private String errorMsg;
 
 
     @Override
@@ -68,6 +69,7 @@ public class CarsController extends HttpServlet {
 
         RequestDispatcher rd = request.getRequestDispatcher("/sections/cars_list.jsp");
         rd.forward(request, response);
+
     }
     
 
@@ -79,11 +81,23 @@ public class CarsController extends HttpServlet {
        String numPlate = request.getParameter("numPlate");
        LocalDate regDate = LocalDate.parse(request.getParameter("regDate"));
 
-        Car car = new Car(manufacturer, model, type, numPlate, regDate);
+        if(LocalDate.now().isBefore(regDate)) {
 
-        cDao.saveCar(car);
+            errorMsg = "Questa macchina non è ancora stata registrata. Riprova";
+            request.setAttribute("errorMsg", errorMsg);
+            rd = request.getRequestDispatcher("/admin/manage_cars.jsp");
+            rd.forward(request, response);
+
+        } else {
+
+            Car car = new Car(manufacturer, model, type, numPlate, regDate);
+
+            cDao.saveCar(car);
+
+        }
 
         listCars(request, response);
+
     }
     
 
@@ -91,7 +105,7 @@ public class CarsController extends HttpServlet {
 
         Long carId = Long.valueOf(request.getParameter("carId"));
 
-        car = cDao.selById(carId);
+        Car car = cDao.selById(carId);
 
         request.setAttribute("carUpdate", car);
         rd = request.getRequestDispatcher("/admin/manage_cars.jsp");
@@ -110,15 +124,27 @@ public class CarsController extends HttpServlet {
         String numPlate = request.getParameter("numPlate");
         LocalDate regDate = LocalDate.parse(request.getParameter("regDate"));
 
-        car = cDao.selById(carId);
+        Car car = cDao.selById(carId);
 
-        car.setManufacturer(manufacturer);
-        car.setModel(model);
-        car.setType(type);
-        car.setNumPlate(numPlate);
-        car.setRegDate(regDate);
+        if(LocalDate.now().isBefore(regDate)) {
 
-        cDao.updateCar(car);
+            errorMsg = "Questa macchina non è ancora stata registrata. Riprova";
+            request.setAttribute("carUpdate", car);
+            request.setAttribute("errorMsg", errorMsg);
+            rd = request.getRequestDispatcher("/admin/manage_cars.jsp");
+            rd.forward(request, response);
+
+        } else {
+
+            car.setManufacturer(manufacturer);
+            car.setModel(model);
+            car.setType(type);
+            car.setNumPlate(numPlate);
+            car.setRegDate(regDate);
+
+            cDao.updateCar(car);
+
+        }
 
         listCars(request, response);
 
@@ -126,9 +152,10 @@ public class CarsController extends HttpServlet {
     
 
     private void deleteCar(HttpServletRequest request, HttpServletResponse response) throws  ServletException, IOException {
+
         Long carId = Long.valueOf(request.getParameter("carId"));
 
-        car = cDao.selById(carId);
+        Car car = cDao.selById(carId);
 
         cDao.removeCar(car);
 
@@ -138,6 +165,7 @@ public class CarsController extends HttpServlet {
     
 
     private void searchCar(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
         String model = request.getParameter("nameSearch");
 
 
@@ -147,11 +175,7 @@ public class CarsController extends HttpServlet {
 
         rd = request.getRequestDispatcher("/admin/cars_list.jsp");
         rd.forward(request, response);
-    }
-    
-    
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
     }
+
 }

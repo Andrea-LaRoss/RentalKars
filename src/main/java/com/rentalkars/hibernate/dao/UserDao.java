@@ -1,9 +1,7 @@
 package com.rentalkars.hibernate.dao;
 
-import java.time.LocalDate;
 import java.util.List;
 
-import com.rentalkars.hibernate.entity.Car;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -11,8 +9,6 @@ import com.rentalkars.hibernate.entity.User;
 import com.rentalkars.hibernate.utils.HibernateConfig;
 import org.hibernate.query.Query;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.*;
 
 public class UserDao extends AbstractDao<User, Long>{
@@ -94,13 +90,19 @@ public class UserDao extends AbstractDao<User, Long>{
     }
 
 
-    public User selByEmail(String email) {
+    public List<User> selByEmail(String email) {
         tx = null;
+        List<User> users = null;
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
 
             tx = session.beginTransaction();
 
-            user = session.get(User.class, email);
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<User> query = builder.createQuery(User.class);
+            Root<User> userSet = query.from(User.class);
+            CriteriaQuery<User> select = query.select(userSet);
+
+            users = session.createQuery(select.where(builder.like(userSet.get("email"), "%"+email+"%"))).getResultList();
 
             tx.commit();
         } catch (Exception e) {
@@ -109,7 +111,7 @@ public class UserDao extends AbstractDao<User, Long>{
             }
             e.printStackTrace();
         }
-        return user;
+        return users;
     }
 
 
@@ -122,9 +124,35 @@ public class UserDao extends AbstractDao<User, Long>{
 
             CriteriaBuilder builder = session.getCriteriaBuilder();
             CriteriaQuery<User> query = builder.createQuery(User.class);
-            Root<User> set = query.from(User.class);
-            query.select(set).where(builder.equal(set.get("firstName"), firstName));
-            users = session.createQuery(query).getResultList();
+            Root<User> userSet = query.from(User.class);
+            CriteriaQuery<User> select = query.select(userSet);
+
+            users = session.createQuery(select.where(builder.like(userSet.get("firstName"), "%"+firstName+"%"))).getResultList();
+
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        }
+        return users;
+    }
+
+
+    public List<User> selByLastName(String lastName) {
+        tx = null;
+        List<User> users = null;
+        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
+
+            tx = session.beginTransaction();
+
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<User> query = builder.createQuery(User.class);
+            Root<User> userSet = query.from(User.class);
+            CriteriaQuery<User> select = query.select(userSet);
+
+            users = session.createQuery(select.where(builder.like(userSet.get("lastName"), "%"+lastName+"%"))).getResultList();
 
             tx.commit();
         } catch (Exception e) {
@@ -140,16 +168,6 @@ public class UserDao extends AbstractDao<User, Long>{
     public List <User> getUsers() {
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
             return session.createQuery("from User", User.class).list();
-        }
-    }
-
-    public List <User> getUsers(String firstName) {
-        tx = null;
-        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
-            tx = session.beginTransaction();
-            Query query = session.createQuery("from User where firstName like %:firstName%");
-            query.setParameter("firstName", firstName);
-            return query.getResultList();
         }
     }
 

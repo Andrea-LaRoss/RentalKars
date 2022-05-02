@@ -1,8 +1,6 @@
 package com.rentalkars.servlet;
 
-import com.rentalkars.hibernate.dao.CarDao;
 import com.rentalkars.hibernate.dao.UserDao;
-import com.rentalkars.hibernate.entity.Car;
 import com.rentalkars.hibernate.entity.User;
 
 import javax.servlet.*;
@@ -10,13 +8,16 @@ import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
 
 @WebServlet(name = "UserController", value = "/UserController")
 public class UserController extends HttpServlet {
 
-    private UserDao uDao = new UserDao();
+    private final UserDao uDao = new UserDao();
     private RequestDispatcher rd;
+
+    private String errorMsg;
 
 
     @Override
@@ -34,7 +35,7 @@ public class UserController extends HttpServlet {
                 break;
 
             case "ADDorUPDATE":
-                if(request.getParameter("userId") == ""){
+                if(request.getParameter("userId").equals("")){
                     addUser(request, response);
                 } else {
                     updateUser(request, response);
@@ -85,8 +86,19 @@ public class UserController extends HttpServlet {
         String lastName = request.getParameter("lastName");
         LocalDate birthday = LocalDate.parse(request.getParameter("birthday"));
 
-        User user = new User(email, password, firstName, lastName, birthday, false);
-        uDao.saveUser(user);
+        if(LocalDate.now().isBefore(birthday) || checkAge(birthday.until(LocalDate.now()))) {
+
+            errorMsg = "O vieni dal futuro o non sei maggiorenne. Reinserisci la data";
+            request.setAttribute("errorMsg", errorMsg);
+            rd = request.getRequestDispatcher("/admin/manage_users.jsp");
+            rd.forward(request, response);
+
+        } else {
+
+            User user = new User(email, password, firstName, lastName, birthday, false);
+            uDao.saveUser(user);
+
+        }
 
         listUsers(request, response);
 
@@ -98,8 +110,6 @@ public class UserController extends HttpServlet {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
-        //User user = uDao.selEmailPassword(email, password);
-       //request.setAttribute("loggedUser", user);
 
         rd = request.getRequestDispatcher("/index.jsp");
         rd.forward(request, response);
@@ -131,16 +141,33 @@ public class UserController extends HttpServlet {
 
         User user = uDao.selById(userId);
 
-        user.setEmail(email);
-        user.setPassword(password);
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
-        user.setBirthday(birthday);
+        if(LocalDate.now().isBefore(birthday) || checkAge(birthday.until(LocalDate.now()))) {
 
-        uDao.updateUser(user);
+            errorMsg = "O vieni dal futuro o non sei maggiorenne. Reinserisci la data";
+            request.setAttribute("userUpdate", user);
+            request.setAttribute("errorMsg", errorMsg);
+            rd = request.getRequestDispatcher("/admin/manage_users.jsp");
+            rd.forward(request, response);
+
+        } else {
+
+            user.setEmail(email);
+            user.setPassword(password);
+            user.setFirstName(firstName);
+            user.setLastName(lastName);
+            user.setBirthday(birthday);
+
+            uDao.updateUser(user);
+
+        }
 
         listUsers(request, response);
 
+    }
+
+
+    public boolean checkAge(Period timeDiff) {
+        return (timeDiff.getYears() < 18);
     }
 
 
@@ -160,7 +187,7 @@ public class UserController extends HttpServlet {
         String firstName = request.getParameter("nameSearch");
 
 
-        List<User> userList = uDao.getUsers(firstName);
+        List<User> userList = uDao.selByFirstName(firstName);
 
         request.setAttribute("usersList", userList);
 

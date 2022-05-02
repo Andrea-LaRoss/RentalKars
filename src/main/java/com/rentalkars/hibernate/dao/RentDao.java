@@ -9,7 +9,10 @@ import org.hibernate.Transaction;
 
 import com.rentalkars.hibernate.entity.Rent;
 import com.rentalkars.hibernate.utils.HibernateConfig;
-import org.hibernate.query.Query;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 
 public class RentDao {
@@ -93,6 +96,56 @@ public class RentDao {
         return rent;
     }
 
+    public List<Rent> listUserReservation(User user){
+        tx = null;
+        List<Rent> list = null;
+
+        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
+
+            tx = session.beginTransaction();
+
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Rent> query = builder.createQuery(Rent.class);
+            Root<Rent> rentSet = query.from(Rent.class);
+            CriteriaQuery<Rent> select = query.select(rentSet);
+
+            list = session.createQuery(select.where(builder.equal(rentSet.get("user"), user))).getResultList();
+
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+
+    public List<Rent> availableCars(LocalDate startDate, LocalDate endDate) {
+        List<Rent> list = null;
+        tx = null;
+
+        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
+
+            tx = session.beginTransaction();
+
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Rent> query = builder.createQuery(Rent.class);
+            Root<Rent> rentSet = query.from(Rent.class);
+            CriteriaQuery<Rent> select = query.select(rentSet);
+
+            list = session.createQuery(query.where(builder.between(rentSet.get("startDate"), startDate, endDate))).getResultList();
+
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        }
+        return list;
+    }
 
     //Ritorna la lista di tutte le prenotazioni con i relativi utenti collegati
     public List <Rent> getRents() {

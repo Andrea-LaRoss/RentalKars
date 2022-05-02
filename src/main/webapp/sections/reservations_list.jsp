@@ -2,6 +2,7 @@
 <jsp:include page="/template/header.jsp"/>
 
 <h2>Listino auto</h2>
+<h5>${errorMsg}</h5>
 
 <!-- SE l'utente è admin mostra il tasto-->
 <a href="user/manage_reservations.jsp"><strong>Nuova prenotazione</strong></a> <br>
@@ -24,6 +25,8 @@
             <c:param name="rentId" value="${tempRent.id}"/>
         </c:url>
         <tr>
+            <td></td>
+            <td></td>
             <td>${tempRent.startDate}</td>
             <td>${tempRent.endDate}</td>
             <td><a href="${update}">Modifica</a> | <a href="${delete}" onclick="if(!(confirm('Sei sicuro?'))) return false">Elimina</a></td>

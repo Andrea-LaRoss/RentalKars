@@ -4,7 +4,6 @@ import javax.persistence.*;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.Set;
 
 @Entity
@@ -106,4 +105,7 @@ public class User implements Serializable {
         isAdmin = admin;
     }
 
+    public Set<Rent> getReservations() { return reservations; }
+
+    public void setReservations(Set<Rent> reservations) { this.reservations = reservations; }
 }

@@ -94,4 +94,8 @@ public class Car implements Serializable {
     public void setRegDate(LocalDate regDate) {
         this.regDate = regDate;
     }
+
+    public Set<Rent> getReservation() { return reservation; }
+
+    public void setReservation(Set<Rent> reservation) { this.reservation = reservation; }
 }

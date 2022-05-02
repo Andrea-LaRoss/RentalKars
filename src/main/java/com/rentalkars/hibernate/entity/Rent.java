@@ -33,9 +33,10 @@ public class Rent implements Serializable {
 
     }
 
-    public Rent(LocalDate startDate, LocalDate endDate){
+    public Rent(LocalDate startDate, LocalDate endDate, Car car){
         this.startDate = startDate;
         this.endDate = endDate;
+        this.car = car;
     }
 
 

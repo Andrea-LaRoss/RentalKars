@@ -1,6 +1,7 @@
 <jsp:include page="/template/header.jsp"/>
 
 <h2>Form Utente</h2>
+<h5>${errorMsg}</h5>
 
 <form action="UserController" method="GET">
     <span>Nome:</span><br><input type="text" name="firstName" required value="${userUpdate.firstName}"><br>
