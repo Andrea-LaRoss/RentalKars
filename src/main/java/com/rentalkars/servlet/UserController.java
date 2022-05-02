@@ -88,10 +88,11 @@ public class UserController extends HttpServlet {
 
         if(LocalDate.now().isBefore(birthday) || checkAge(birthday.until(LocalDate.now()))) {
 
-            errorMsg = "O vieni dal futuro o non sei maggiorenne. Reinserisci la data";
-            request.setAttribute("errorMsg", errorMsg);
-            rd = request.getRequestDispatcher("/admin/manage_users.jsp");
-            rd.forward(request, response);
+            inputErrors("O vieni dal futuro o non sei maggiorenne. Riprova", request, response);
+
+        } else if(email.equals(uDao.selByEmail(email))) {
+
+            inputErrors("Questa email è già utilizzata", request, response);
 
         } else {
 
@@ -143,11 +144,11 @@ public class UserController extends HttpServlet {
 
         if(LocalDate.now().isBefore(birthday) || checkAge(birthday.until(LocalDate.now()))) {
 
-            errorMsg = "O vieni dal futuro o non sei maggiorenne. Reinserisci la data";
-            request.setAttribute("userUpdate", user);
-            request.setAttribute("errorMsg", errorMsg);
-            rd = request.getRequestDispatcher("/admin/manage_users.jsp");
-            rd.forward(request, response);
+            inputErrors("O vieni dal futuro o non sei maggiorenne. Reinserisci la data", request, response);
+
+        } else if(email.equals(uDao.selByEmail(email))) {
+
+            inputErrors("Questa email è già utilizzata", request, response);
 
         } else {
 
@@ -163,6 +164,14 @@ public class UserController extends HttpServlet {
 
         listUsers(request, response);
 
+    }
+
+
+    public void inputErrors(String error, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        errorMsg = error;
+        request.setAttribute("errorMsg", errorMsg);
+        rd = request.getRequestDispatcher("/admin/manage_users.jsp");
+        rd.forward(request, response);
     }
 
 
@@ -184,10 +193,24 @@ public class UserController extends HttpServlet {
 
 
     private void searchUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String firstName = request.getParameter("nameSearch");
 
+        List<User> userList = null;
+        String input = request.getParameter("input");
 
-        List<User> userList = uDao.selByFirstName(firstName);
+        switch (input) {
+            case "firstName":
+                String firstName = request.getParameter("toSearch");
+                userList = uDao.selByFirstName(firstName);
+                break;
+            case "lastName":
+                String lastName = request.getParameter("toSearch");
+                userList = uDao.selByLastName(lastName);
+                break;
+            case "email":
+                String email = request.getParameter("toSearch");
+                userList = uDao.selByEmail(email);
+        }
+
 
         request.setAttribute("usersList", userList);
 

@@ -1,6 +1,7 @@
 package com.rentalkars.servlet;
 
 import com.rentalkars.hibernate.dao.RentDao;
+import com.rentalkars.hibernate.dao.UserDao;
 import com.rentalkars.hibernate.entity.Car;
 import com.rentalkars.hibernate.entity.Rent;
 
@@ -41,6 +42,9 @@ public class RentController extends HttpServlet {
                     updateReservation(request, response);
                 }
                 break;
+
+            case "RESERVE":
+                addReservation(request, response);
 
             case "LOAD":
                 loadReservation(request, response);
@@ -83,21 +87,25 @@ public class RentController extends HttpServlet {
 
         } else {
 
-
-            Car car = new Car();
-            Rent rent = new Rent(startDate, endDate, car);
-            addReservation(request, response, rent);
+            List<Car> cars = rDao.availableCars(startDate, endDate);
+            request.setAttribute("cars", cars);
+            rd = request.getRequestDispatcher("/user/manage_reservations.jsp");
+            rd.forward(request, response);
 
 
         }
 
-        //listRents(request, response);
+        listRents(request, response);
 
     }
 
-    public void addReservation(HttpServletRequest request, HttpServletResponse response, Rent rent) throws ServletException, IOException {
+    public void addReservation(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+        LocalDate startDate = LocalDate.parse(request.getParameter("startDate"));
+        LocalDate endDate = LocalDate.parse(request.getParameter("endDate"));
 
+        UserDao uDao = new UserDao();
+        Rent rent = new Rent(startDate, endDate, null, uDao.selById(1L));
         rDao.saveRent(rent);
         listRents(request, response);
 

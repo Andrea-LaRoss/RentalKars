@@ -6,7 +6,12 @@
 <!-- SE l'utente è admin mostra il tasto-->
 <form action="UserController">
     <input type="hidden" name="command" value="SEARCH">
-    <input type="text" name="nameSearch" placeholder="Inserisci un nome">
+    <select name="input">
+        <option value="firstName">Nome</option>
+        <option value="lastName">Cognome</option>
+        <option value="email">Email</option>
+    </select>
+    <input type="text" name="toSearch" placeholder="Inserisci un nome">
     <input type="submit" value="cerca">
 </form>   |
 <a href="admin/manage_users.jsp"><strong>Aggiungi</strong></a> <br>

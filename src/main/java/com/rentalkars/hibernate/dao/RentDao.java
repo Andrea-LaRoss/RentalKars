@@ -3,6 +3,7 @@ package com.rentalkars.hibernate.dao;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.rentalkars.hibernate.entity.Car;
 import com.rentalkars.hibernate.entity.User;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -10,9 +11,7 @@ import org.hibernate.Transaction;
 import com.rentalkars.hibernate.entity.Rent;
 import com.rentalkars.hibernate.utils.HibernateConfig;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 
 
 public class RentDao {
@@ -122,7 +121,7 @@ public class RentDao {
     }
 
 
-    public List<Rent> availableCars(LocalDate startDate, LocalDate endDate) {
+    public List<Car> availableCars(LocalDate startDate, LocalDate endDate) {
         List<Rent> list = null;
         tx = null;
 
@@ -133,11 +132,21 @@ public class RentDao {
             CriteriaBuilder builder = session.getCriteriaBuilder();
             CriteriaQuery<Rent> query = builder.createQuery(Rent.class);
             Root<Rent> rentSet = query.from(Rent.class);
-            CriteriaQuery<Rent> select = query.select(rentSet);
+            CriteriaQuery<Rent> select = query.select(rentSet.get("car"));
 
-            list = session.createQuery(query.where(builder.between(rentSet.get("startDate"), startDate, endDate))).getResultList();
+            //Query che estrare i noleggi approvati avvenuti durante il periodo deciso
+            Predicate between = builder.and(builder.or(builder.between(rentSet.get("startDate"), startDate, endDate),
+                                            builder.between(rentSet.get("endDate"), startDate, endDate)),
+                                            builder.equal(rentSet.get("status"), "Approvata"));
+
+            Path<Car> cars = (Path<Car>) select.where(between);
+
+            Predicate notIn = builder.not(builder.in(cars));
+
+            list = session.createQuery(select.where(notIn)).getResultList();
 
             tx.commit();
+
         } catch (Exception e) {
             if (tx != null) {
                 tx.rollback();
@@ -150,7 +159,7 @@ public class RentDao {
     //Ritorna la lista di tutte le prenotazioni con i relativi utenti collegati
     public List <Rent> getRents() {
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
-            return session.createQuery("from Rent", Rent.class).list();
+            return session.createQuery("from Rent",Rent.class).list();
         }
     }
 

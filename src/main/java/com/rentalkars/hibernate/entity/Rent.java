@@ -4,7 +4,6 @@ import javax.persistence.*;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.Date;
 
 @Entity
 @Table(name = "rent")
@@ -29,14 +28,18 @@ public class Rent implements Serializable {
     @Column(name = "end_date")
     private LocalDate endDate;
 
+    @Column(name = "status")
+    private String status;
+
     public Rent(){
 
     }
 
-    public Rent(LocalDate startDate, LocalDate endDate, Car car){
+    public Rent(LocalDate startDate, LocalDate endDate, Car car, User user){
         this.startDate = startDate;
         this.endDate = endDate;
         this.car = car;
+        this.user = user;
     }
 
 
@@ -79,4 +82,9 @@ public class Rent implements Serializable {
     public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
     }
+
+    public String isStatus() { return status; }
+
+    public void setStatus(String status) { this.status = status; }
+
 }
