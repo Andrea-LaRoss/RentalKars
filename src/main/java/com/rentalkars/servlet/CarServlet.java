@@ -17,7 +17,7 @@ public class CarServlet extends HttpServlet {
     private final CarDao cDao = new CarDao();
     private RequestDispatcher rd;
 
-    private String errorMsg;
+    private String errorMsg = null;
 
 
     @Override
@@ -83,7 +83,7 @@ public class CarServlet extends HttpServlet {
 
         } else if (numPlate.equals(cDao.selByPlate(numPlate))) {
 
-            inputErrors("Questa email è già utilizzata", request, response);
+            inputErrors("Questa targa è già utilizzata", request, response);
 
         } else {
 
@@ -130,7 +130,7 @@ public class CarServlet extends HttpServlet {
 
         }  else if (numPlate.equals(cDao.selByPlate(numPlate))) {
 
-            inputErrors("Questa email è già utilizzata", request, response);
+            inputErrors("Questa targa è già utilizzata", request, response);
 
         } else {
 

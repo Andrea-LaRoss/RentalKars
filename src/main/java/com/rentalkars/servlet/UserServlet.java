@@ -17,7 +17,7 @@ public class UserServlet extends HttpServlet {
     private final UserDao uDao = new UserDao();
     private RequestDispatcher rd;
 
-    private String errorMsg;
+    private String errorMsg = null;
 
 
     @Override

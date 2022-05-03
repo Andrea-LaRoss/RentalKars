@@ -4,10 +4,15 @@ import java.util.List;
 
 
 import com.rentalkars.hibernate.entity.Car;
+import com.rentalkars.hibernate.entity.User;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import com.rentalkars.hibernate.utils.HibernateConfig;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 public class CarDao {
 
@@ -88,13 +93,19 @@ public class CarDao {
     }
 
 
-    public Car selByPlate(String plate) {
+    public List<Car> selByPlate(String numPlate) {
         tx = null;
+        List<Car> cars = null;
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
 
             tx = session.beginTransaction();
 
-            car = session.get(Car.class, plate);
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Car> query = builder.createQuery(Car.class);
+            Root<Car> carSet = query.from(Car.class);
+            CriteriaQuery<Car> select = query.select(carSet);
+
+            cars = session.createQuery(select.where(builder.like(carSet.get("numPlate"), "%"+numPlate+"%"))).getResultList();
 
             tx.commit();
         } catch (Exception e) {
@@ -103,7 +114,7 @@ public class CarDao {
             }
             e.printStackTrace();
         }
-        return car;
+        return cars;
     }
 
 

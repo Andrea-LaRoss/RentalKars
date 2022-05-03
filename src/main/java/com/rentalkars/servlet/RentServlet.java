@@ -20,7 +20,7 @@ public class RentServlet extends HttpServlet {
     private final RentDao rDao = new RentDao();
     private RequestDispatcher rd;
 
-    private String errorMsg;
+    private String errorMsg = null;
 
 
     @Override

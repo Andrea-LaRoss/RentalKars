@@ -90,7 +90,7 @@ public class Rent implements Serializable {
         this.endDate = endDate;
     }
 
-    public String isStatus() { return status; }
+    public String getStatus() { return status; }
 
     public void setStatus(String status) { this.status = status; }
 

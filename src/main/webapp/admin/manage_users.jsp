@@ -1,15 +1,47 @@
 <jsp:include page="/template/header.jsp"/>
 
-<h2>Form Utente</h2>
-<h5>${errorMsg}</h5>
+<div class="container">
+    <h2>Registrazione Utente</h2>
+    <br><br><br>
 
-<form action="UserServlet" method="POST">
-    <span>Nome:</span><br><input type="text" name="firstName" required value="${userUpdate.firstName}"><br>
-    <span>Cognome:</span><br><input type="text" name="lastName" required value="${userUpdate.lastName}"><br>
-    <span>Email:</span><br><input type="email" name="email" required value="${userUpdate.email}"><br>
-    <span>Password:</span><br><input type="password" name="password" required value="${userUpdate.password}"><br>
-    <span>Data di nascita:</span><br><input type="date" name="birthday" required value="${userUpdate.birthday}"><br>
-    <input type="hidden" name="command" value="ADDorUPDATE">
-    <input type="hidden" name="userId" value="${userUpdate.id}">
-    <input type="submit" value="Salva">
-</form>
+    <div>
+        <b-alert show variant="danger">${errorMsg}</b-alert>
+    </div>
+</div>
+
+<div class="container">
+    <form action="UserServlet" method="POST">
+        <div class="form-group">
+            <div class="form-floating mb-4">
+                <input type="text" class="form-control" name="firstName" id="firstName" required value="${userUpdate.firstName}">
+                <label for="firstName">Nome</label>
+            </div>
+            <div class="form-floating mb-4">
+                <input type="text" class="form-control" name="lastName" id="lastName" required value="${userUpdate.lastName}"">
+                <label for="lastName">Cognome</label>
+            </div>
+            <div class="form-floating mb-4">
+                <input type="email" class="form-control" name="email" id="email" required value="${userUpdate.email}">
+                <label for="email">Email</label>
+            </div>
+            <div class="form-floating mb-4">
+                <input type="password" class="form-control" name="password" id="password" required value="${userUpdate.password}">
+                <label for="password">Password</label>
+            </div>
+        </div>
+        <div class="form-floating mb-4">
+            <input type="date" class="form-control" name="birthday" id="birthday" required value="${userUpdate.birthday}">
+            <label for="birthday">Data di Nascita</label>
+        </div>
+
+        <input type="hidden" name="command" value="ADDorUPDATE">
+        <input type="hidden" name="userId" value="${userUpdate.id}">
+
+        <div class="d-grid gap-2">
+            <input class="btn btn-lg btn-primary" type="submit" value="Salva">
+        </div>
+
+    </form>
+</div>
+
+<jsp:include page="/template/footer.jsp"/>
