@@ -123,10 +123,10 @@ public class RentServlet extends HttpServlet {
     private void updateReservation(HttpServletRequest request, HttpServletResponse response, String status) throws ServletException, IOException {
 
         Long rentId = Long.valueOf(request.getParameter("rentId"));
-        LocalDate startDate = LocalDate.parse(request.getParameter("startDate"));
-        LocalDate endDate = LocalDate.parse(request.getParameter("endDate"));
 
         Rent rent = rDao.selById(rentId);
+        LocalDate startDate = rent.getStartDate();
+        LocalDate endDate = rent.getEndDate();
 
         if(checkTime(LocalDate.now().until(startDate))) {
 

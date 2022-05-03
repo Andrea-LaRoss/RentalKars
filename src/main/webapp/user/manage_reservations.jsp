@@ -14,11 +14,11 @@
     <form action="RentServlet" method="GET">
         <div class="form-floating mb-4">
             <input type="date" class="form-control" name="startDate" id="startDate" required value="${rentUpdate.startDate}">
-            <label for="startDate">Data di Nascita</label>
+            <label for="startDate">Inizio Periodo</label>
         </div>
         <div class="form-floating mb-4">
             <input type="date" class="form-control" name="endDate" id="endDate" required value="${rentUpdate.endDate}">
-            <label for="endDate">Data di Nascita</label>
+            <label for="endDate">Fine Periodo</label>
         </div>
 
         <input type="hidden" name="command" value="CHECKorUPDATE">

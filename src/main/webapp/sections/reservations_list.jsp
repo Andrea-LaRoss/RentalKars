@@ -43,12 +43,14 @@
                 <td>${tempRent.car.manufacturer} ${tempRent.car.model}</td>
                 <td>${tempRent.startDate}</td>
                 <td>${tempRent.endDate}</td>
-                <td></td>
+                <td>${tempRent.status}</td>
                 <td></td>
                 <td>
                     <a class="btn btn-outline-primary" href="${update}">Modifica</a>
                     <a class="btn btn-outline-danger" href="${delete}" onclick="if(!(confirm('Sei sicuro?'))) return false">Elimina</a>
+                    <c:if test="${tempRent.status == 'In Attesa'}">
                     <a class="btn btn-outline-success" href="${approve}">Approva</a>
+                    </c:if>
                 </td>
             </tr>
         </c:forEach>
