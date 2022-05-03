@@ -7,11 +7,10 @@ import org.hibernate.Transaction;
 
 import com.rentalkars.hibernate.entity.User;
 import com.rentalkars.hibernate.utils.HibernateConfig;
-import org.hibernate.query.Query;
 
 import javax.persistence.criteria.*;
 
-public class UserDao extends AbstractDao<User, Long>{
+public class UserDao{
 
     private Transaction tx;
     private User user;

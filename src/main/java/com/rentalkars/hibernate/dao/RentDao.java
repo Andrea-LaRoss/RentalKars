@@ -1,6 +1,7 @@
 package com.rentalkars.hibernate.dao;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.rentalkars.hibernate.entity.Car;
@@ -122,8 +123,11 @@ public class RentDao {
 
 
     public List<Car> availableCars(LocalDate startDate, LocalDate endDate) {
-        List<Rent> list = null;
+
         tx = null;
+        List<Rent> reservations = null;
+        List<Long> cars = new ArrayList<>();
+        List<Car> available = new ArrayList<>();
 
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
 
@@ -132,18 +136,27 @@ public class RentDao {
             CriteriaBuilder builder = session.getCriteriaBuilder();
             CriteriaQuery<Rent> query = builder.createQuery(Rent.class);
             Root<Rent> rentSet = query.from(Rent.class);
-            CriteriaQuery<Rent> select = query.select(rentSet.get("car"));
+            CriteriaQuery<Rent> select = query.select(rentSet);
 
             //Query che estrare i noleggi approvati avvenuti durante il periodo deciso
             Predicate between = builder.and(builder.or(builder.between(rentSet.get("startDate"), startDate, endDate),
                                             builder.between(rentSet.get("endDate"), startDate, endDate)),
                                             builder.equal(rentSet.get("status"), "Approvata"));
 
-            Path<Car> cars = (Path<Car>) select.where(between);
+            reservations = session.createQuery(select.where(between).distinct(true)).getResultList();
 
-            Predicate notIn = builder.not(builder.in(cars));
+            for(Rent tempReservations : reservations){
+                cars.add(tempReservations.getCar().getId());
+            }
 
-            list = session.createQuery(select.where(notIn)).getResultList();
+            CriteriaQuery<Car> query2 = builder.createQuery(Car.class);
+            Root<Car> carSet = query2.from(Car.class);
+            CriteriaQuery<Car> selectFromCar = query2.select(carSet);
+
+            Predicate notIn = builder.not(carSet.get("id").in(cars));
+
+            available = session.createQuery(selectFromCar.where(notIn)).getResultList();
+
 
             tx.commit();
 
@@ -153,8 +166,9 @@ public class RentDao {
             }
             e.printStackTrace();
         }
-        return list;
+        return available;
     }
+
 
     //Ritorna la lista di tutte le prenotazioni con i relativi utenti collegati
     public List <Rent> getRents() {

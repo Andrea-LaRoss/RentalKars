@@ -2,7 +2,7 @@
 
 <h2>Registrati al sito</h2>
 
-<form action="UserRegister" method="POST">
+<form action="UserServlet" method="POST">
     <span>Email:</span> <br>
     <input type="email" name="email" required> <br>
     <span>Password:</span> <br>
@@ -17,7 +17,6 @@
 </form>
 
 Possiedi un account? <a href="auth/login.jsp">Accedi</a>
-<%= request.getSession()%>
 </body>
 
 </html>

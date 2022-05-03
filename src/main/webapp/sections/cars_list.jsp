@@ -13,14 +13,13 @@
         <th>Tipo</th>
         <th>Targa</th>
         <th>Data Immatricolazione</th>
-        <th>Ultima prenotazione</th>
     </tr>
     <c:forEach var="tempCar" items="${carsList}">
-        <c:url var="update" value="CarsController">
+        <c:url var="update" value="CarServlet">
             <c:param name="command" value="LOAD"/>
             <c:param name="carId" value="${tempCar.id}"/>
         </c:url>
-        <c:url var="delete" value="CarsController">
+        <c:url var="delete" value="CarServlet">
             <c:param name="command" value="DELETE"/>
             <c:param name="carId" value="${tempCar.id}"/>
         </c:url>
@@ -30,7 +29,6 @@
             <td>${tempCar.type}</td>
             <td>${tempCar.numPlate}</td>
             <td>${tempCar.regDate}</td>
-            <td></td>
             <td><a href="${update}">Modifica</a> | <a href="${delete}" onclick="if(!(confirm('Sei sicuro?'))) return false">Elimina</a></td>
         </tr>
     </c:forEach>

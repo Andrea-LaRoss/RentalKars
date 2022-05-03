@@ -11,8 +11,8 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
-@WebServlet(name = "CarsController", value = "/CarsController")
-public class CarsController extends HttpServlet {
+@WebServlet(name = "CarServlet", value = "/CarServlet")
+public class CarServlet extends HttpServlet {
 
     private final CarDao cDao = new CarDao();
     private RequestDispatcher rd;
@@ -50,10 +50,6 @@ public class CarsController extends HttpServlet {
                 deleteCar(request, response);
                 break;
 
-            case "SEARCH":
-                searchCar(request, response);
-                break;
-
             default:
                 listCars(request, response);
                 break;
@@ -83,10 +79,11 @@ public class CarsController extends HttpServlet {
 
         if(LocalDate.now().isBefore(regDate)) {
 
-            errorMsg = "Questa macchina non è ancora stata registrata. Riprova";
-            request.setAttribute("errorMsg", errorMsg);
-            rd = request.getRequestDispatcher("/admin/manage_cars.jsp");
-            rd.forward(request, response);
+            inputErrors("Questa macchina non è ancora stata registrata. Riprova", request, response);
+
+        } else if (numPlate.equals(cDao.selByPlate(numPlate))) {
+
+            inputErrors("Questa email è già utilizzata", request, response);
 
         } else {
 
@@ -128,11 +125,12 @@ public class CarsController extends HttpServlet {
 
         if(LocalDate.now().isBefore(regDate)) {
 
-            errorMsg = "Questa macchina non è ancora stata registrata. Riprova";
             request.setAttribute("carUpdate", car);
-            request.setAttribute("errorMsg", errorMsg);
-            rd = request.getRequestDispatcher("/admin/manage_cars.jsp");
-            rd.forward(request, response);
+            inputErrors("Questa macchina non è ancora stata registrata. Riprova", request, response);
+
+        }  else if (numPlate.equals(cDao.selByPlate(numPlate))) {
+
+            inputErrors("Questa email è già utilizzata", request, response);
 
         } else {
 
@@ -162,20 +160,12 @@ public class CarsController extends HttpServlet {
         listCars(request, response);
 
     }
-    
 
-    private void searchCar(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-        String model = request.getParameter("nameSearch");
-
-
-        List<Car> carList = cDao.getCars(model);
-
-        request.setAttribute("carsList", carList);
-
-        rd = request.getRequestDispatcher("/admin/cars_list.jsp");
+    public void inputErrors(String error, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        errorMsg = error;
+        request.setAttribute("errorMsg", errorMsg);
+        rd = request.getRequestDispatcher("/admin/manage_cars.jsp");
         rd.forward(request, response);
-
     }
 
 }

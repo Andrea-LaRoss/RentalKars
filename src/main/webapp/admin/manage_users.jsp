@@ -3,7 +3,7 @@
 <h2>Form Utente</h2>
 <h5>${errorMsg}</h5>
 
-<form action="UserController" method="GET">
+<form action="UserServlet" method="POST">
     <span>Nome:</span><br><input type="text" name="firstName" required value="${userUpdate.firstName}"><br>
     <span>Cognome:</span><br><input type="text" name="lastName" required value="${userUpdate.lastName}"><br>
     <span>Email:</span><br><input type="email" name="email" required value="${userUpdate.email}"><br>

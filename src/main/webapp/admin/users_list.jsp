@@ -4,7 +4,7 @@
 <h2>Lista utenti</h2>
 
 <!-- SE l'utente è admin mostra il tasto-->
-<form action="UserController">
+<form action="UserServlet">
     <input type="hidden" name="command" value="SEARCH">
     <select name="input">
         <option value="firstName">Nome</option>
@@ -22,14 +22,13 @@
         <th>Nome</th>
         <th>Data di nascita</th>
         <th>Email</th>
-        <th>Ultima prenotazione</th>
     </tr>
     <c:forEach var="tempUser" items="${usersList}">
-        <c:url var="update" value="UserController">
+        <c:url var="update" value="UserServlet">
             <c:param name="command" value="LOAD"/>
             <c:param name="userId" value="${tempUser.id}"/>
         </c:url>
-        <c:url var="delete" value="UserController">
+        <c:url var="delete" value="UserServlet">
             <c:param name="command" value="DELETE"/>
             <c:param name="userId" value="${tempUser.id}"/>
         </c:url>
@@ -37,7 +36,6 @@
             <td>${tempUser.firstName} ${tempUser.lastName}</td>
             <td>${tempUser.birthday}</td>
             <td>${tempUser.email}</td>
-            <td></td>
             <td><a href="${update}">Modifica</a> | <a href="${delete}" onclick="if(!(confirm('Sei sicuro?'))) return false">Elimina</a></td>
         </tr>
 

@@ -11,8 +11,8 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
 
-@WebServlet(name = "UserController", value = "/UserController")
-public class UserController extends HttpServlet {
+@WebServlet(name = "UserServlet", value = "/UserServlet")
+public class UserServlet extends HttpServlet {
 
     private final UserDao uDao = new UserDao();
     private RequestDispatcher rd;
@@ -24,22 +24,14 @@ public class UserController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         String command = request.getParameter("command");
-        if(command == null) {
+        if (command == null) {
             command = "LIST";
         }
 
-        switch (command){
+        switch (command) {
 
             case "LIST":
                 listUsers(request, response);
-                break;
-
-            case "ADDorUPDATE":
-                if(request.getParameter("userId").equals("")){
-                    addUser(request, response);
-                } else {
-                    updateUser(request, response);
-                }
                 break;
 
             case "VALIDATE":
@@ -86,11 +78,11 @@ public class UserController extends HttpServlet {
         String lastName = request.getParameter("lastName");
         LocalDate birthday = LocalDate.parse(request.getParameter("birthday"));
 
-        if(LocalDate.now().isBefore(birthday) || checkAge(birthday.until(LocalDate.now()))) {
+        if (LocalDate.now().isBefore(birthday) || checkAge(birthday.until(LocalDate.now()))) {
 
             inputErrors("O vieni dal futuro o non sei maggiorenne. Riprova", request, response);
 
-        } else if(email.equals(uDao.selByEmail(email))) {
+        } else if (email.equals(uDao.selByEmail(email))) {
 
             inputErrors("Questa email è già utilizzata", request, response);
 
@@ -142,11 +134,12 @@ public class UserController extends HttpServlet {
 
         User user = uDao.selById(userId);
 
-        if(LocalDate.now().isBefore(birthday) || checkAge(birthday.until(LocalDate.now()))) {
+        if (LocalDate.now().isBefore(birthday) || checkAge(birthday.until(LocalDate.now()))) {
 
+            request.setAttribute("userUpdate", user);
             inputErrors("O vieni dal futuro o non sei maggiorenne. Reinserisci la data", request, response);
 
-        } else if(email.equals(uDao.selByEmail(email))) {
+        } else if (email.equals(uDao.selByEmail(email))) {
 
             inputErrors("Questa email è già utilizzata", request, response);
 
@@ -180,7 +173,7 @@ public class UserController extends HttpServlet {
     }
 
 
-    private void deleteUser(HttpServletRequest request, HttpServletResponse response) throws  ServletException, IOException {
+    private void deleteUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Long userId = Long.valueOf(request.getParameter("userId"));
 
         User user = uDao.selById(userId);
@@ -221,6 +214,29 @@ public class UserController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String command = request.getParameter("command");
+        if (command == null) {
+            command = "LIST";
+        }
 
+        switch (command) {
+
+            case "LIST":
+                listUsers(request, response);
+                break;
+
+            case "ADDorUPDATE":
+                if (request.getParameter("userId").equals("")) {
+                    addUser(request, response);
+                } else {
+                    updateUser(request, response);
+                }
+                break;
+
+            default:
+                listUsers(request, response);
+                break;
+        }
     }
+
 }

@@ -1,16 +1,13 @@
 package com.rentalkars.hibernate.dao;
 
-import java.time.LocalDate;
 import java.util.List;
 
-import java.util.Date;
 
 import com.rentalkars.hibernate.entity.Car;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import com.rentalkars.hibernate.utils.HibernateConfig;
-import org.hibernate.query.Query;
 
 public class CarDao {
 
@@ -117,13 +114,4 @@ public class CarDao {
         }
     }
 
-    public List <Car> getCars(String model) {
-        tx = null;
-        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
-            tx = session.beginTransaction();
-            Query query = session.createQuery("from Car where model = :model");
-            query.setParameter("model", model);
-            return query.getResultList();
-        }
-    }
 }

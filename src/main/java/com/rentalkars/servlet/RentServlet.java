@@ -1,5 +1,6 @@
 package com.rentalkars.servlet;
 
+import com.rentalkars.hibernate.dao.CarDao;
 import com.rentalkars.hibernate.dao.RentDao;
 import com.rentalkars.hibernate.dao.UserDao;
 import com.rentalkars.hibernate.entity.Car;
@@ -13,8 +14,8 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
 
-@WebServlet(name = "RentController", value = "/RentController")
-public class RentController extends HttpServlet {
+@WebServlet(name = "RentServlet", value = "/RentServlet")
+public class RentServlet extends HttpServlet {
 
     private final RentDao rDao = new RentDao();
     private RequestDispatcher rd;
@@ -39,12 +40,17 @@ public class RentController extends HttpServlet {
                 if(request.getParameter("rentId").equals("")){
                     checkAvailable(request, response);
                 } else {
-                    updateReservation(request, response);
+                    updateReservation(request, response,"In Attesa");
                 }
+                break;
+
+            case "APPROVE":
+                updateReservation(request, response,"Approvata");
                 break;
 
             case "RESERVE":
                 addReservation(request, response);
+                break;
 
             case "LOAD":
                 loadReservation(request, response);
@@ -78,40 +84,43 @@ public class RentController extends HttpServlet {
         LocalDate startDate = LocalDate.parse(request.getParameter("startDate"));
         LocalDate endDate = LocalDate.parse(request.getParameter("endDate"));
 
+        Rent rent = new Rent(startDate, endDate);
+
         if(endDate.isBefore(startDate) || startDate.isBefore(LocalDate.now())) {
 
-            errorMsg = "La data finale inserita non è valida. Riprova";
-            request.setAttribute("errorMsg", errorMsg);
-            rd = request.getRequestDispatcher("/user/manage_reservations.jsp");
-            rd.forward(request, response);
+            inputErrors("La data finale inserita non è valida. Riprova", request, response);
 
         } else {
 
             List<Car> cars = rDao.availableCars(startDate, endDate);
             request.setAttribute("cars", cars);
+            request.setAttribute("rentUpdate", rent);
             rd = request.getRequestDispatcher("/user/manage_reservations.jsp");
             rd.forward(request, response);
 
 
         }
 
-        listRents(request, response);
-
     }
+
 
     public void addReservation(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         LocalDate startDate = LocalDate.parse(request.getParameter("startDate"));
         LocalDate endDate = LocalDate.parse(request.getParameter("endDate"));
+        Long carId = Long.valueOf(request.getParameter("carId"));
+
+        CarDao cDao = new CarDao();
+        Car car = cDao.selById(carId);
 
         UserDao uDao = new UserDao();
-        Rent rent = new Rent(startDate, endDate, null, uDao.selById(1L));
+        Rent rent = new Rent(startDate, endDate, car, uDao.selById(1L), "In Attesa");
         rDao.saveRent(rent);
         listRents(request, response);
 
     }
 
-    private void updateReservation(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void updateReservation(HttpServletRequest request, HttpServletResponse response, String status) throws ServletException, IOException {
 
         Long rentId = Long.valueOf(request.getParameter("rentId"));
         LocalDate startDate = LocalDate.parse(request.getParameter("startDate"));
@@ -121,16 +130,14 @@ public class RentController extends HttpServlet {
 
         if(checkTime(LocalDate.now().until(startDate))) {
 
-            errorMsg = "Non è possibile modificare la prenotazione. La data è troppo vicina";
             request.setAttribute("rentUpdate", rent);
-            request.setAttribute("errorMsg", errorMsg);
-            rd = request.getRequestDispatcher("/user/manage_reservations.jsp");
-            rd.forward(request, response);
+            inputErrors("Non è possibile modificare la prenotazione. La data è troppo vicina", request, response);
 
         } else {
 
             rent.setStartDate(startDate);
             rent.setEndDate(endDate);
+            rent.setStatus(status);
             rDao.updateReservation(rent);
             listRents(request, response);
 
@@ -179,7 +186,18 @@ public class RentController extends HttpServlet {
         } else {
             rDao.removeReservation(rent);
         }
+
         listRents(request, response);
+
+    }
+
+
+    public void inputErrors(String error, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        errorMsg = error;
+        request.setAttribute("errorMsg", errorMsg);
+        rd = request.getRequestDispatcher("/user/manage_reservations.jsp");
+        rd.forward(request, response);
 
     }
 

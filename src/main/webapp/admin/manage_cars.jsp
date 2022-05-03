@@ -3,7 +3,7 @@
 <h2>Gestisci Auto</h2>
 <h5>${errorMsg}</h5>
 
-<form action="CarsController" method="GET">
+<form action="CarServlet" method="GET">
     <span>Marca:</span><br><input type="text" name="manufacturer" required value="${carUpdate.manufacturer}"><br>
     <span>Modello:</span><br><input type="text" name="model" required value="${carUpdate.model}"><br>
     <span>Tipo:</span><br><input type="text" name="type" required value="${carUpdate.type}"><br>
