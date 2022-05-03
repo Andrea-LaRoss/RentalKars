@@ -153,10 +153,15 @@ public class RentDao {
             Root<Car> carSet = query2.from(Car.class);
             CriteriaQuery<Car> selectFromCar = query2.select(carSet);
 
-            Predicate notIn = builder.not(carSet.get("id").in(cars));
+            if(cars.size() == 0) {
 
-            available = session.createQuery(selectFromCar.where(notIn)).getResultList();
+               available = session.createQuery(selectFromCar).getResultList();
 
+            } else{
+
+                Predicate notIn = builder.not(carSet.get("id").in(cars));
+                available = session.createQuery(selectFromCar.where(notIn)).getResultList();
+            }
 
             tx.commit();
 

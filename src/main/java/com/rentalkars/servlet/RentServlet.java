@@ -45,7 +45,7 @@ public class RentServlet extends HttpServlet {
                 break;
 
             case "APPROVE":
-                updateReservation(request, response,"Approvata");
+                approveReservation(request, response,"Approvata");
                 break;
 
             case "RESERVE":
@@ -120,13 +120,36 @@ public class RentServlet extends HttpServlet {
 
     }
 
-    private void updateReservation(HttpServletRequest request, HttpServletResponse response, String status) throws ServletException, IOException {
-
+    private void approveReservation(HttpServletRequest request, HttpServletResponse response, String status) throws ServletException, IOException {
         Long rentId = Long.valueOf(request.getParameter("rentId"));
-
         Rent rent = rDao.selById(rentId);
         LocalDate startDate = rent.getStartDate();
         LocalDate endDate = rent.getEndDate();
+
+        if(checkTime(LocalDate.now().until(startDate))) {
+
+            request.setAttribute("rentUpdate", rent);
+            inputErrors("Non è possibile modificare la prenotazione. La data è troppo vicina", request, response);
+
+        } else {
+
+            rent.setStartDate(startDate);
+            rent.setEndDate(endDate);
+            rent.setStatus(status);
+            rDao.updateReservation(rent);
+            listRents(request, response);
+
+        }
+
+    }
+
+
+    private void updateReservation(HttpServletRequest request, HttpServletResponse response, String status) throws ServletException, IOException {
+
+        Long rentId = Long.valueOf(request.getParameter("rentId"));
+        LocalDate startDate = LocalDate.parse(request.getParameter("startDate"));
+        LocalDate endDate = LocalDate.parse(request.getParameter("endDate"));
+        Rent rent = rDao.selById(rentId);
 
         if(checkTime(LocalDate.now().until(startDate))) {
 
