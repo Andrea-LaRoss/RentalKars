@@ -47,7 +47,8 @@ public class UserServlet extends HttpServlet {
                 break;
 
             default:
-                listUsers(request, response);
+                rd = request.getRequestDispatcher("index.jsp");
+                rd.forward(request, response);
                 break;
 
         }
@@ -78,7 +79,7 @@ public class UserServlet extends HttpServlet {
 
             inputErrors("O vieni dal futuro o non sei maggiorenne. Riprova", "/admin/manage_users.jsp", request, response);
 
-        } else if (email.equals(uDao.searchByEmail(email).get(0))) {
+        } else if (uDao.searchByEmail(email) != null) {
 
             inputErrors("Questa email è già utilizzata", "/admin/manage_users.jsp", request, response);
 
@@ -140,8 +141,9 @@ public class UserServlet extends HttpServlet {
             request.setAttribute("userUpdate", user);
             inputErrors("O vieni dal futuro o non sei maggiorenne. Reinserisci la data", "/admin/manage_users.jsp", request, response);
 
-        } else if (email.equals(uDao.searchByEmail(email).get(0))) {
+        } else if (uDao.searchByEmail(email) != null) {
 
+            request.setAttribute("userUpdate", user);
             inputErrors("Questa email è già utilizzata", "/admin/manage_users.jsp", request, response);
 
         } else {

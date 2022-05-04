@@ -51,7 +51,8 @@ public class CarServlet extends HttpServlet {
                 break;
 
             default:
-                listCars(request, response);
+                rd = request.getRequestDispatcher("index.jsp");
+                rd.forward(request, response);
                 break;
 
         }
@@ -81,7 +82,7 @@ public class CarServlet extends HttpServlet {
 
             inputErrors("Questa macchina non è ancora stata registrata. Riprova", request, response);
 
-        } else if (numPlate.equals(cDao.selByPlate(numPlate))) {
+        } else if (cDao.selByPlate(numPlate) != null) {
 
             inputErrors("Questa targa è già utilizzata", request, response);
 
@@ -128,8 +129,9 @@ public class CarServlet extends HttpServlet {
             request.setAttribute("carUpdate", car);
             inputErrors("Questa macchina non è ancora stata registrata. Riprova", request, response);
 
-        }  else if (numPlate.equals(cDao.selByPlate(numPlate))) {
+        }  else if (cDao.selByPlate(numPlate) != null) {
 
+            request.setAttribute("carUpdate", car);
             inputErrors("Questa targa è già utilizzata", request, response);
 
         } else {

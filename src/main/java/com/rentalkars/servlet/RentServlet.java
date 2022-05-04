@@ -2,7 +2,6 @@ package com.rentalkars.servlet;
 
 import com.rentalkars.hibernate.dao.CarDao;
 import com.rentalkars.hibernate.dao.RentDao;
-import com.rentalkars.hibernate.dao.UserDao;
 import com.rentalkars.hibernate.entity.Car;
 import com.rentalkars.hibernate.entity.Rent;
 import com.rentalkars.hibernate.entity.User;
@@ -11,7 +10,6 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
-import java.sql.Array;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
@@ -64,7 +62,8 @@ public class RentServlet extends HttpServlet {
                 break;
 
             default:
-                listRents(request, response);
+                rd = request.getRequestDispatcher("index.jsp");
+                rd.forward(request, response);
                 break;
         }
 
@@ -73,11 +72,13 @@ public class RentServlet extends HttpServlet {
     private void listRents(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         List<Rent> rentList = new ArrayList<>();
-        if(!request.getSession().getAttribute("loggedUser").equals("")){
+        if(!request.getSession().getAttribute("loggedUser").equals("")) {
             User user = (User) request.getSession().getAttribute("loggedUser");
-            rentList = rDao.listUserReservation(user);
-        } else {
-            rentList = rDao.getRents();
+            if (user.isAdmin()) {
+                rentList = rDao.getRents();
+            } else {
+                rentList = rDao.listUserReservation(user);
+            }
         }
         request.setAttribute("rentsList", rentList);
 
@@ -121,7 +122,6 @@ public class RentServlet extends HttpServlet {
         CarDao cDao = new CarDao();
         Car car = cDao.selById(carId);
 
-        UserDao uDao = new UserDao();
         User user = (User) request.getSession().getAttribute("loggedUser");
 
         Rent rent = new Rent(startDate, endDate, car, user, "In Attesa");
@@ -131,6 +131,7 @@ public class RentServlet extends HttpServlet {
     }
 
     private void approveReservation(HttpServletRequest request, HttpServletResponse response, String status) throws ServletException, IOException {
+
         Long rentId = Long.valueOf(request.getParameter("rentId"));
         Rent rent = rDao.selById(rentId);
         LocalDate startDate = rent.getStartDate();
@@ -162,7 +163,11 @@ public class RentServlet extends HttpServlet {
         Rent rent = rDao.selById(rentId);
 
         if(rent != null){
-            if (checkTime(LocalDate.now().until(startDate))) {
+            if(endDate.isBefore(startDate) || startDate.isBefore(LocalDate.now())) {
+
+                inputErrors("La data finale inserita non è valida. Riprova", request, response);
+
+            } else if (checkTime(LocalDate.now().until(startDate))) {
 
                 request.setAttribute("rentUpdate", rent);
                 inputErrors("Non è possibile modificare la prenotazione. La data è troppo vicina", request, response);

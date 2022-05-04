@@ -4,7 +4,6 @@ import java.util.List;
 
 
 import com.rentalkars.hibernate.entity.Car;
-import com.rentalkars.hibernate.entity.User;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -93,9 +92,9 @@ public class CarDao {
     }
 
 
-    public List<Car> selByPlate(String numPlate) {
+    public Car selByPlate(String numPlate) {
         tx = null;
-        List<Car> cars = null;
+        car = null;
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
 
             tx = session.beginTransaction();
@@ -105,7 +104,7 @@ public class CarDao {
             Root<Car> carSet = query.from(Car.class);
             CriteriaQuery<Car> select = query.select(carSet);
 
-            cars = session.createQuery(select.where(builder.like(carSet.get("numPlate"), "%"+numPlate+"%"))).getResultList();
+            car = session.createQuery(select.where(builder.equal(carSet.get("numPlate"), numPlate))).getSingleResult();
 
             tx.commit();
         } catch (Exception e) {
@@ -114,7 +113,7 @@ public class CarDao {
             }
             e.printStackTrace();
         }
-        return cars;
+        return car;
     }
 
 

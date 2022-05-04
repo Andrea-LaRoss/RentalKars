@@ -20,12 +20,12 @@ public class RentDao {
     private Transaction tx;
     private Rent rent;
 
-    public void saveRent(Rent Rent) {
+    public void saveRent(Rent rent) {
         tx = null;
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
 
             tx = session.beginTransaction();
-            session.save(Rent);
+            session.save(rent);
             tx.commit();
 
         } catch (Exception e) {
@@ -125,7 +125,6 @@ public class RentDao {
     public List<Car> availableCars(LocalDate startDate, LocalDate endDate) {
 
         tx = null;
-        List<Rent> reservations = null;
         List<Long> cars = new ArrayList<>();
         List<Car> available = new ArrayList<>();
 
@@ -143,7 +142,7 @@ public class RentDao {
                                             builder.between(rentSet.get("endDate"), startDate, endDate)),
                                             builder.equal(rentSet.get("status"), "Approvata"));
 
-            reservations = session.createQuery(select.where(between).distinct(true)).getResultList();
+            List<Rent> reservations = session.createQuery(select.where(between).distinct(true)).getResultList();
 
             for(Rent tempReservations : reservations){
                 cars.add(tempReservations.getCar().getId());
