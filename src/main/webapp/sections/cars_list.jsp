@@ -40,18 +40,21 @@
                 <td>${tempCar.numPlate}</td>
                 <td>${tempCar.regDate}</td>
                 <td>
-                    <a class="btn btn-outline-primary" href="${update}">Modifica</a>
-                    <a class="btn btn-outline-danger" href="${delete}" onclick="if(!(confirm('Sei sicuro?'))) return false">Elimina</a>
+                    <c:if test="${loggedUser.admin eq true}">
+                        <a class="btn btn-outline-primary" href="${update}">Modifica</a>
+                        <a class="btn btn-outline-danger" href="${delete}" onclick="if(!(confirm('Sei sicuro?'))) return false">Elimina</a>
+                    </c:if>
                 </td>
             </tr>
         </c:forEach>
         </tbody>
     </table>
 
-    <div class="d-grid gap-2">
-        <a class="btn btn-info" href="admin/manage_cars.jsp"><strong>Aggiungi</strong></a>
-    </div>
-
+    <c:if test="${loggedUser.admin eq true}">
+        <div class="d-grid gap-2">
+            <a class="btn btn-info" href="admin/manage_cars.jsp"><strong>Aggiungi</strong></a>
+        </div>
+    </c:if>
 </div>
 
 <jsp:include page="/template/footer.jsp"/>

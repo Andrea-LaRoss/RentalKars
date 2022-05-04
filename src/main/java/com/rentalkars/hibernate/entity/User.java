@@ -31,7 +31,7 @@ public class User implements Serializable {
     private LocalDate birthday;
 
     @Column(name = "is_admin", nullable = false)
-    private boolean isAdmin;
+    private boolean admin;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Rent> reservations;
@@ -46,7 +46,7 @@ public class User implements Serializable {
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthday = birthday;
-        this.isAdmin = isAdmin;
+        this.admin = isAdmin;
     }
 
     public long getId() {
@@ -98,11 +98,11 @@ public class User implements Serializable {
     }
 
     public boolean isAdmin() {
-        return isAdmin;
+        return admin;
     }
 
     public void setAdmin(boolean admin) {
-        isAdmin = admin;
+        admin = admin;
     }
 
     public Set<Rent> getReservations() { return reservations; }

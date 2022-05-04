@@ -7,12 +7,12 @@
 
     <c:url var="profile" value="UserServlet">
         <c:param name="command" value="LOAD"/>
-        <c:param name="userId" value="${tempUser.id}"/>
+        <c:param name="userId" value="${loggedUser.id}"/>
     </c:url>
 
     <c:url var="reservations" value="RentServlet">
         <c:param name="command" value="LIST"/>
-        <c:param name="userId" value="${tempUser.id}"/>
+        <c:param name="userId" value="${loggedUser.id}"/>
     </c:url>
 
     <a class="btn btn-primary mb-3" href="${reservations}">Vai alla lista delle tue prenotazioni</a> <br>

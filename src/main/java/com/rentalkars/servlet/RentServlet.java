@@ -5,13 +5,16 @@ import com.rentalkars.hibernate.dao.RentDao;
 import com.rentalkars.hibernate.dao.UserDao;
 import com.rentalkars.hibernate.entity.Car;
 import com.rentalkars.hibernate.entity.Rent;
+import com.rentalkars.hibernate.entity.User;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
+import java.sql.Array;
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet(name = "RentServlet", value = "/RentServlet")
@@ -69,8 +72,13 @@ public class RentServlet extends HttpServlet {
 
     private void listRents(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        List<Rent> rentList = rDao.getRents();
-
+        List<Rent> rentList = new ArrayList<>();
+        if(!request.getSession().getAttribute("loggedUser").equals("")){
+            User user = (User) request.getSession().getAttribute("loggedUser");
+            rentList = rDao.listUserReservation(user);
+        } else {
+            rentList = rDao.getRents();
+        }
         request.setAttribute("rentsList", rentList);
 
         rd = request.getRequestDispatcher("/sections/reservations_list.jsp");
@@ -114,7 +122,9 @@ public class RentServlet extends HttpServlet {
         Car car = cDao.selById(carId);
 
         UserDao uDao = new UserDao();
-        Rent rent = new Rent(startDate, endDate, car, uDao.selById(1L), "In Attesa");
+        User user = (User) request.getSession().getAttribute("loggedUser");
+
+        Rent rent = new Rent(startDate, endDate, car, user, "In Attesa");
         rDao.saveRent(rent);
         listRents(request, response);
 
@@ -151,21 +161,24 @@ public class RentServlet extends HttpServlet {
         LocalDate endDate = LocalDate.parse(request.getParameter("endDate"));
         Rent rent = rDao.selById(rentId);
 
-        if(checkTime(LocalDate.now().until(startDate))) {
+        if(rent != null){
+            if (checkTime(LocalDate.now().until(startDate))) {
 
-            request.setAttribute("rentUpdate", rent);
-            inputErrors("Non è possibile modificare la prenotazione. La data è troppo vicina", request, response);
+                request.setAttribute("rentUpdate", rent);
+                inputErrors("Non è possibile modificare la prenotazione. La data è troppo vicina", request, response);
 
+            } else {
+
+                rent.setStartDate(startDate);
+                rent.setEndDate(endDate);
+                rent.setStatus(status);
+                rDao.updateReservation(rent);
+                listRents(request, response);
+
+            }
         } else {
-
-            rent.setStartDate(startDate);
-            rent.setEndDate(endDate);
-            rent.setStatus(status);
-            rDao.updateReservation(rent);
-            listRents(request, response);
-
+            checkAvailable(request, response);
         }
-
     }
 
 

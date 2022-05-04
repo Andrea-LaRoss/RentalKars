@@ -59,9 +59,12 @@
         </c:forEach>
         </tbody>
     </table>
-    <div class="d-grid gap-2">
-        <a class="btn btn-lg btn-info" href="admin/manage_users.jsp"><strong>Aggiungi</strong></a>
-    </div>
+
+    <c:if test="${loggedUser.admin eq true}">
+        <div class="d-grid gap-2">
+            <a class="btn btn-lg btn-info" href="admin/manage_users.jsp"><strong>Aggiungi</strong></a>
+        </div>
+    </c:if>
 </div>
 
 <jsp:include page="/template/footer.jsp"/>

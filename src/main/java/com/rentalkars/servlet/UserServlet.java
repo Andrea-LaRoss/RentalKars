@@ -34,10 +34,6 @@ public class UserServlet extends HttpServlet {
                 listUsers(request, response);
                 break;
 
-            case "VALIDATE":
-                validateUser(request, response);
-                break;
-
             case "LOAD":
                 loadUser(request, response);
                 break;
@@ -80,11 +76,11 @@ public class UserServlet extends HttpServlet {
 
         if (LocalDate.now().isBefore(birthday) || checkAge(birthday.until(LocalDate.now()))) {
 
-            inputErrors("O vieni dal futuro o non sei maggiorenne. Riprova", request, response);
+            inputErrors("O vieni dal futuro o non sei maggiorenne. Riprova", "/admin/manage_users.jsp", request, response);
 
-        } else if (email.equals(uDao.selByEmail(email))) {
+        } else if (email.equals(uDao.searchByEmail(email).get(0))) {
 
-            inputErrors("Questa email è già utilizzata", request, response);
+            inputErrors("Questa email è già utilizzata", "/admin/manage_users.jsp", request, response);
 
         } else {
 
@@ -102,10 +98,15 @@ public class UserServlet extends HttpServlet {
 
         String email = request.getParameter("email");
         String password = request.getParameter("password");
+        User user = uDao.validateUser(email, password);
+        if(user != null) {
+            request.getSession().setAttribute("loggedUser", user);
+            rd = request.getRequestDispatcher("/index.jsp");
+            rd.forward(request, response);
+        } else {
+            inputErrors("Credenziali errate. Riprova", "/auth/login.jsp", request, response);
+        }
 
-
-        rd = request.getRequestDispatcher("/index.jsp");
-        rd.forward(request, response);
     }
 
 
@@ -137,11 +138,11 @@ public class UserServlet extends HttpServlet {
         if (LocalDate.now().isBefore(birthday) || checkAge(birthday.until(LocalDate.now()))) {
 
             request.setAttribute("userUpdate", user);
-            inputErrors("O vieni dal futuro o non sei maggiorenne. Reinserisci la data", request, response);
+            inputErrors("O vieni dal futuro o non sei maggiorenne. Reinserisci la data", "/admin/manage_users.jsp", request, response);
 
-        } else if (email.equals(uDao.selByEmail(email))) {
+        } else if (email.equals(uDao.searchByEmail(email).get(0))) {
 
-            inputErrors("Questa email è già utilizzata", request, response);
+            inputErrors("Questa email è già utilizzata", "/admin/manage_users.jsp", request, response);
 
         } else {
 
@@ -160,10 +161,10 @@ public class UserServlet extends HttpServlet {
     }
 
 
-    public void inputErrors(String error, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void inputErrors(String error, String redirect, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         errorMsg = error;
         request.setAttribute("errorMsg", errorMsg);
-        rd = request.getRequestDispatcher("/admin/manage_users.jsp");
+        rd = request.getRequestDispatcher(redirect);
         rd.forward(request, response);
     }
 
@@ -201,7 +202,7 @@ public class UserServlet extends HttpServlet {
                 break;
             case "email":
                 String email = request.getParameter("toSearch");
-                userList = uDao.selByEmail(email);
+                userList = uDao.searchByEmail(email);
         }
 
 
@@ -231,6 +232,10 @@ public class UserServlet extends HttpServlet {
                 } else {
                     updateUser(request, response);
                 }
+                break;
+
+            case "VALIDATE":
+                validateUser(request, response);
                 break;
 
             default:

@@ -88,8 +88,32 @@ public class UserDao{
         return user;
     }
 
+    public User validateUser(String email, String password) {
+        tx = null;
+        User user = null;
+        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
 
-    public List<User> selByEmail(String email) {
+            tx = session.beginTransaction();
+
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<User> query = builder.createQuery(User.class);
+            Root<User> userSet = query.from(User.class);
+            CriteriaQuery<User> select = query.select(userSet);
+
+            user = session.createQuery(select.where(builder.and(builder.equal(userSet.get("email"), email),
+                                                                builder.equal(userSet.get("password"), password)))).getSingleResult();
+
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        }
+        return user;
+    }
+
+    public List<User> searchByEmail(String email) {
         tx = null;
         List<User> users = null;
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {

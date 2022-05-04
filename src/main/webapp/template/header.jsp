@@ -25,12 +25,21 @@
                 <li class="nav-item">
                     <a class="nav-link" href="CarServlet">Parco Auto</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="user/dashboard.jsp">Account</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="admin/dashboard.jsp">Admin</a>
-                </li>
+
+                <c:if test="${!empty loggedUser}">
+                    <c:choose>
+                        <c:when test="${loggedUser.admin eq false}">
+                            <li class="nav-item">
+                                <a class="nav-link" href="user/dashboard.jsp">Account</a>
+                            </li>
+                        </c:when>
+                        <c:otherwise>
+                            <li class="nav-item">
+                                <a class="nav-link" href="admin/dashboard.jsp">Admin</a>
+                            </li>
+                        </c:otherwise>
+                    </c:choose>
+                </c:if>
 
             </ul>
         </div>

@@ -46,10 +46,14 @@
                 <td>${tempRent.status}</td>
                 <td></td>
                 <td>
-                    <a class="btn btn-outline-primary" href="${update}">Modifica</a>
+                    <c:if test="${loggedUser.admin eq false}">
+                        <a class="btn btn-outline-primary" href="${update}">Modifica</a>
+                    </c:if>
                     <a class="btn btn-outline-danger" href="${delete}" onclick="if(!(confirm('Sei sicuro?'))) return false">Elimina</a>
                     <c:if test="${tempRent.status == 'In Attesa'}">
-                    <a class="btn btn-outline-success" href="${approve}">Approva</a>
+                        <c:if test="${loggedUser.admin eq true}">
+                            <a class="btn btn-outline-success" href="${approve}">Approva</a>
+                        </c:if>
                     </c:if>
                 </td>
             </tr>
@@ -57,10 +61,11 @@
         </tbody>
     </table>
 
-    <div class="d-grid gap-2">
-        <a class="btn btn-info" href="user/manage_reservations.jsp"><strong>Nuova prenotazione</strong></a>
-    </div>
-
+    <c:if test="${loggedUser.admin eq false}">
+        <div class="d-grid gap-2">
+            <a class="btn btn-info" href="user/manage_reservations.jsp"><strong>Nuova prenotazione</strong></a>
+        </div>
+    </c:if>
 </div>
 
 <jsp:include page="/template/footer.jsp"/>
